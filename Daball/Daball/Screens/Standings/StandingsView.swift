@@ -17,50 +17,6 @@ struct Line: Shape {
     }
 }
 
-struct StandingRow: View {
-    var data: StandingModel
-
-    var body: some View {
-        HStack {
-            HStack(alignment: .center, spacing: 0) {
-                Text(data.rank, format: .number)
-                    .frame(width: 24)
-                HStack {
-                    AsyncImage(url: URL(string: data.logo)) { image in
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                    } placeholder: {
-                        Image(systemName: "figure.soccer")
-                    }
-                    .frame(width: 24, height: 24)
-                    .padding(8)
-                    Text(data.name)
-                }
-                .frame(width: 160)
-
-                Spacer()
-            }
-
-            Spacer()
-            Divider()
-
-            ScrollView(.horizontal) {
-                HStack {
-                    ForEach(data.stats) { stat in
-                        Text(stat.value, format: .number)
-                            .font(.headline)
-                            .foregroundColor(.primary)
-                            .padding(8)
-                            .frame(width: 45)
-                        Divider()
-                    }
-                }
-            }
-        }
-    }
-}
-
 struct StandingTableInfoHeader: View {
     var body: some View {
         HStack(spacing: 32) {
@@ -82,16 +38,14 @@ struct StandingTableStatsHeader: View {
     var stats: [StatModel]
 
     var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 0) {
-                ForEach(stats) { stat in
-                    Text(stat.shortDescription)
-                        .font(.headline.bold())
-                        .foregroundColor(Color.red)
-                        .padding(8)
-                        .frame(width: 45)
-                    Divider()
-                }
+        HStack(spacing: 0) {
+            ForEach(stats) { stat in
+                Text(stat.shortDescription)
+                    .font(.headline.bold())
+                    .foregroundColor(Color.red)
+                    .padding(8)
+                    .frame(width: 64)
+                Divider()
             }
         }
     }
@@ -129,16 +83,14 @@ struct StandingTeamStatsRow: View {
     var data: StandingModel
 
     var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 0) {
-                ForEach(data.stats) { stat in
-                    Text(stat.value, format: .number)
-                        .font(.headline)
-                        .foregroundColor(.primary)
-                        .padding(8)
-                        .frame(width: 45)
-                    Divider()
-                }
+        HStack(spacing: 0) {
+            ForEach(data.stats) { stat in
+                Text(stat.value, format: .number)
+                    .font(.headline)
+                    .foregroundColor(.primary)
+                    .padding(8)
+                    .frame(width: 64)
+                Divider()
             }
         }
     }
@@ -146,51 +98,100 @@ struct StandingTeamStatsRow: View {
 
 struct StandingsView: View {
     @StateObject private var viewModel = StandingsViewModel()
+    @State var competitionId: Int = 9
+
+    @State private var displayCompetitionsPopover: Bool = false
+
+    init(competitionId: Int) {
+        self.competitionId = competitionId
+    }
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                HStack(spacing: 0) {
-                    VStack(spacing: 0) {
-                        StandingTableInfoHeader()
-                        Divider()
-                        ForEach(viewModel.standings) { standing in
-                            StandingTeamInfoRow(data: standing)
-                                .frame(height: 45)
+            if viewModel.loading {
+                ProgressView {
+                    Text("Loading...")
+                }
+                .task {
+                    await viewModel.handleStandings(competitionId: competitionId)
+                }
 
-                            Line()
-                                .stroke(style: .init(dash: [2]))
-                                .foregroundStyle(.primary).opacity(0.5)
-                                .frame(height: 1)
+            } else {
+                tableView
+                    .navigationTitle(viewModel.leagueTitle)
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItemGroup(placement: .primaryAction) {
+                            Button {
+                                displayCompetitionsPopover = true
+                            } label: {
+                                Image(systemName: displayCompetitionsPopover ? "chevron.up" : "chevron.down")
+                            }
                         }
                     }
-                    .frame(minWidth: 0, maxWidth: .infinity)
+                    .onChange(of: competitionId) { _, newValue in
+                        viewModel.reset(competitionId: newValue)
+                        displayCompetitionsPopover = false
+                    }
+                    .popover(isPresented: $displayCompetitionsPopover) {
+                        CompetitionsView(selectedCompetitionId: $competitionId)
+                    }
+            }
+        }
+    }
 
-                    VStack(spacing: 0) {
+    var tableView: some View {
+        ScrollView {
+            HStack(spacing: 0) {
+                VStack(spacing: 0) {
+                    StandingTableInfoHeader()
+                        .frame(height: 45)
+                        .background(.secondary.quaternary)
+
+                    Divider()
+
+                    ForEach(viewModel.standings) { standing in
+                        StandingTeamInfoRow(data: standing)
+                            .frame(height: 45)
+
+                        Line()
+                            .stroke(style: .init(dash: [2]))
+                            .foregroundStyle(.primary).opacity(0.5)
+                            .frame(height: 1)
+                    }
+
+                    Spacer()
+                }
+                .frame(minWidth: 0, maxWidth: .infinity)
+
+                ScrollView(.horizontal, showsIndicators: false) {
+                    VStack(alignment: .center, spacing: 0) {
                         if let first = viewModel.standings.first {
                             StandingTableStatsHeader(stats: first.stats)
+                                .frame(height: 45)
+                                .background(.secondary.quaternary)
+
                             Divider()
                         }
                         ForEach(viewModel.standings) { standing in
                             StandingTeamStatsRow(data: standing)
                                 .frame(height: 45)
+
                             Line()
                                 .stroke(style: .init(dash: [2]))
                                 .foregroundStyle(.primary).opacity(0.5)
                                 .frame(height: 1)
                         }
+
+                        Spacer()
                     }
                     .frame(minWidth: 0, maxWidth: .infinity)
                 }
-            }
-            .navigationTitle(viewModel.leagueTitle)
-            .task {
-                await viewModel.handleStandings()
             }
         }
     }
 }
 
 #Preview {
-    StandingsView()
+    StandingsView(competitionId: 9)
 }

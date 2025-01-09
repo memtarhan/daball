@@ -31,14 +31,17 @@ struct CompetitionRow: View {
 
 struct CompetitionsView: View {
     @StateObject private var viewModel = CompetitionsViewModel()
-
+    
+    @Binding var selectedCompetitionId: Int
+    
     var body: some View {
         NavigationStack {
             List {
                 ForEach(viewModel.competitions) { competition in
-                    NavigationLink(destination: Text(competition.displayName)) {
-                        CompetitionRow(competition: competition)
-                    }
+                    CompetitionRow(competition: competition)
+                        .onTapGesture {
+                            selectedCompetitionId = competition.id
+                        }
                 }
             }
             .navigationTitle("Competitions")
@@ -50,5 +53,5 @@ struct CompetitionsView: View {
 }
 
 #Preview {
-    CompetitionsView()
+    CompetitionsView(selectedCompetitionId: .constant(9))
 }

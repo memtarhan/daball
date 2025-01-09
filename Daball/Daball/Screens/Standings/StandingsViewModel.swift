@@ -50,20 +50,39 @@ struct StandingModel: Identifiable {
 class StandingsViewModel: ObservableObject, StandingsService {
     @Published var standings: [StandingModel] = []
     @Published var leagueTitle: String = ""
+    @Published var loading: Bool = true
 
-    func handleStandings() async {
+    func reset(competitionId: Int) {
+        loading = true
+        standings.removeAll()
+        leagueTitle = ""
+
+        Task { await handleStandings(competitionId: competitionId) }
+    }
+
+    func handleStandings(competitionId: Int) async {
+        loading = true
         do {
-            let response = try await getStandings(competitionId: 9)
+            let response = try await getStandings(competitionId: competitionId)
             leagueTitle = response.leagueTitle
 
             standings = response.standings.map { standing in
-                StandingModel(rank: standing.rank, name: standing.name, logo: standing.logo, stats: standing.stats.map { stat in
+                var stats =  standing.stats.map { stat in
+                    StatModel(description: stat.description, shortDescription: stat.shortDescription, value: stat.value)
+                }
+                stats.insert(StatModel(description: "Points", shortDescription: "P", value: Double(standing.points)), at: 1)
+                stats.append(contentsOf: standing.xgStats.map { stat in
                     StatModel(description: stat.description, shortDescription: stat.shortDescription, value: stat.value)
                 })
+                
+                return StandingModel(rank: standing.rank, name: standing.name, logo: standing.logo, stats: stats)
             }
+
+            loading = false
 
         } catch {
             print(error.localizedDescription)
+            loading = true
         }
     }
 }
