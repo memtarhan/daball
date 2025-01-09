@@ -59,3 +59,55 @@ struct StatResponse: HTTPResponse {
     let description: String
     let shortDescription: String
 }
+
+// MARK: - FixturesResponse
+
+struct FixturesResponse: HTTPResponse {
+    let leagueTitle: String
+    let fixtures: [[FixtureResponse]]
+    let nextWeek: Int
+}
+
+// MARK: - FixtureResponse
+
+struct FixtureResponse: HTTPResponse {
+    let gameWeek: Int
+    let homeTeam: String
+//    let xgData: XgDataResponse?
+    let awayTeam: String
+    let score: String
+    let date: DateResponse
+//    let attendance: String?
+//    let venue: String?
+}
+
+// MARK: - DateResponse
+
+struct DateResponse: HTTPResponse {
+    let dayOfWeek: DayOfWeek
+    let date: String
+    let startTime: String
+}
+
+// MARK: - DayOfWeek
+
+enum DayOfWeek: String, HTTPResponse {
+    case fri = "Fri"
+    case mon = "Mon"
+    case sat = "Sat"
+    case sun = "Sun"
+    case thu = "Thu"
+    case tue = "Tue"
+    case wed = "Wed"
+}
+
+// MARK: - XgDataResponse
+
+struct XgDataResponse: HTTPResponse {
+    let homeTeamXg, awayTeamXg: String
+
+    enum CodingKeys: String, CodingKey {
+        case homeTeamXg = "home_team_xg"
+        case awayTeamXg = "away_team_xg"
+    }
+}

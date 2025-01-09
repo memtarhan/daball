@@ -22,7 +22,6 @@ extension CompetitionsEndpointsService {
     }
 }
 
-
 protocol StandingsEndpointsService: EndpointsService {
     func getStandingsURL(competitionId: Int) -> URL?
 }
@@ -30,5 +29,15 @@ protocol StandingsEndpointsService: EndpointsService {
 extension StandingsEndpointsService {
     func getStandingsURL(competitionId: Int) -> URL? {
         URL(string: "\(baseURL)/competitions/\(competitionId)/standings")
+    }
+}
+
+protocol FixturesEndpointsService: EndpointsService {
+    func getFixturesURL(competitionId: Int) -> URL?
+}
+
+extension FixturesEndpointsService {
+    func getFixturesURL(competitionId: Int) -> URL? {
+        URL(string: "\(baseURL)/competitions/\(competitionId)/fixtures")
     }
 }

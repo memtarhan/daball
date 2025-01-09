@@ -8,34 +8,114 @@
 
 import SwiftUI
 
-struct FixturesView: View {
-    @EnvironmentObject var competitionsViewModel: CompetitionsViewModel
-    
-    @State private var displayCompetitionsPopover: Bool = false
+struct FixtureWeeksView: View {
+    var data: [WeekModel]
+    @Binding var selectedWeek: WeekModel?
 
-    
-    
     var body: some View {
-        NavigationStack {
-            Text("Hello, World!")
-                .navigationTitle(competitionsViewModel.selectedCompetition?.displayName ?? "...")
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItemGroup(placement: .primaryAction) {
-                        Button {
-                            displayCompetitionsPopover = true
-                        } label: {
-                            Image(systemName: displayCompetitionsPopover ? "chevron.up" : "chevron.down")
-                        }
+        VStack {
+            scrollView
+            Divider()
+        }
+    }
+
+    var scrollView: some View {
+        ScrollViewReader { scrollProxy in
+            ScrollView(.horizontal) {
+                HStack(spacing: 0) {
+                    ForEach(data) { week in
+                        Text(week.description)
+                            .foregroundStyle(selectedWeek?.id == week.id ? Color.red : Color.primary)
+                            .padding(12)
+                            .onTapGesture {
+                                selectedWeek = week
+                                withAnimation {
+                                    scrollProxy.scrollTo(week.id, anchor: .center)
+                                }
+                            }
+                            .id(week.id)
+                            .onAppear {
+                                if selectedWeek != nil {
+                                    withAnimation {
+                                        scrollProxy.scrollTo(selectedWeek!.id, anchor: .center)
+                                    }
+                                }
+                            }
+
+                        Divider()
                     }
                 }
+            }
+        }
+    }
+}
+
+struct ScoresView: View {
+    var data: [ScoreModel]
+
+    var body: some View {
+        ScrollView {
+            VStack {
+                ForEach(data) { scoreModel in
+                    VStack {
+                        Text(scoreModel.date)
+                        HStack {
+                            Text(scoreModel.homeTeam)
+                            Text(scoreModel.score)
+                            Text(scoreModel.awayTeam)
+                        }
+                    }
+                    .padding()
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(Color.primary, style: StrokeStyle(lineWidth: 1, dash: [10]))
+                    )
+                    .frame(minWidth: 0, maxWidth: .infinity)
+                    .padding()
+                }
+            }
+        }
+    }
+}
+
+struct FixturesView: View {
+    @StateObject private var viewModel = FixturesViewModel()
+    @EnvironmentObject var competitionsViewModel: CompetitionsViewModel
+
+    @State private var displayCompetitionsPopover: Bool = false
+
+    var body: some View {
+        NavigationStack {
+            VStack {
+                FixtureWeeksView(data: viewModel.weeks, selectedWeek: $viewModel.selectedWeek)
+                    .frame(height: 36)
+
+                ScoresView(data: viewModel.scores)
+            }
+            .navigationTitle(competitionsViewModel.selectedCompetition?.displayName ?? "...")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItemGroup(placement: .primaryAction) {
+                    Button {
+                        displayCompetitionsPopover = true
+                    } label: {
+                        Image(systemName: displayCompetitionsPopover ? "chevron.up" : "chevron.down")
+                    }
+                }
+            }
+            .task {
+//                await viewModel.handleFixtures(competitionId: competitionsViewModel.selectedCompetition!.id)
+            }
         }
         .onChange(of: competitionsViewModel.selectedCompetition) { _, newValue in
             if let competitionId = newValue?.id {
-//                viewModel.reset(competitionId: competitionId)
-//                displayCompetitionsPopover = false
+                viewModel.reset(competitionId: competitionId)
+                displayCompetitionsPopover = false
             }
         }
+        .onChange(of: viewModel.selectedWeek, { oldValue, newValue in
+            viewModel.handleSelectedWeeksFixture()
+        })
         .sheet(isPresented: $displayCompetitionsPopover) {
             CompetitionsView()
                 .environmentObject(competitionsViewModel)
@@ -46,4 +126,5 @@ struct FixturesView: View {
 
 #Preview {
     FixturesView()
+        .environmentObject(CompetitionsViewModel())
 }

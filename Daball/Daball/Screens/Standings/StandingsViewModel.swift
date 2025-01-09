@@ -82,7 +82,7 @@ class StandingsViewModel: ObservableObject, StandingsService {
 
         } catch {
             print(error.localizedDescription)
-            loading = true
+            loading = false
         }
     }
 }
