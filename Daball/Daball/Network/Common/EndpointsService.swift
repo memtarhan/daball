@@ -21,3 +21,14 @@ extension CompetitionsEndpointsService {
         URL(string: "\(baseURL)/competitions")
     }
 }
+
+
+protocol StandingsEndpointsService: EndpointsService {
+    func getStandingsURL(competitionId: Int) -> URL?
+}
+
+extension StandingsEndpointsService {
+    func getStandingsURL(competitionId: Int) -> URL? {
+        URL(string: "\(baseURL)/competitions/\(competitionId)/standings")
+    }
+}

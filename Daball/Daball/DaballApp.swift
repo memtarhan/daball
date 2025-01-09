@@ -11,7 +11,7 @@ import SwiftUI
 struct DaballApp: App {
     var body: some Scene {
         WindowGroup {
-            CompetitionsView()
+            StandingsView()
         }
     }
 }
