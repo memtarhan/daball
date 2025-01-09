@@ -8,14 +8,24 @@
 import SwiftUI
 
 struct ContentView: View {
+    @StateObject var competitionsViewModel: CompetitionsViewModel = CompetitionsViewModel()
+
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        TabView {
+            StandingsView(displayCompetitionsPopover: competitionsViewModel.selectedCompetition == nil)
+                .environmentObject(competitionsViewModel)
+                .tabItem {
+                    Label("Standings", systemImage: "table")
+                }
+                .tag(0)
+
+            FixturesView()
+                .environmentObject(competitionsViewModel)
+                .tabItem {
+                    Label("Fixtures", systemImage: "calendar")
+                }
+                .tag(1)
         }
-        .padding()
     }
 }
 

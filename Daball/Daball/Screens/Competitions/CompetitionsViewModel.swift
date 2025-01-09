@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct CompetitionModel: Identifiable {
+struct CompetitionModel: Identifiable, Equatable {
     let id: Int
     let displayName: String
     let logo: String
@@ -17,6 +17,12 @@ struct CompetitionModel: Identifiable {
 @MainActor
 class CompetitionsViewModel: ObservableObject, CompetitionsService {
     @Published var competitions: [CompetitionModel] = []
+    
+    @Published var selectedCompetition: CompetitionModel? {
+        didSet {
+            print(selectedCompetition!.displayName)
+        }
+    }
 
     func handleCompetitions() async {
         do {
@@ -26,6 +32,8 @@ class CompetitionsViewModel: ObservableObject, CompetitionsService {
                                  displayName: $0.displayName,
                                  logo: $0.logo)
             }
+            
+//            selectedCompetition = competitions.first
 
         } catch {
             print(error.localizedDescription)

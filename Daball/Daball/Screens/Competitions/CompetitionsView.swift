@@ -30,17 +30,19 @@ struct CompetitionRow: View {
 }
 
 struct CompetitionsView: View {
-    @StateObject private var viewModel = CompetitionsViewModel()
-    
-    @Binding var selectedCompetitionId: Int
-    
+    @EnvironmentObject var viewModel: CompetitionsViewModel
+    @Environment(\.dismiss) var dismiss
+
     var body: some View {
         NavigationStack {
             List {
                 ForEach(viewModel.competitions) { competition in
                     CompetitionRow(competition: competition)
                         .onTapGesture {
-                            selectedCompetitionId = competition.id
+                            viewModel.selectedCompetition = competition
+                            withAnimation(Animation.bouncy.delay(0.5)) {
+                                dismiss()
+                            }
                         }
                 }
             }
@@ -53,5 +55,6 @@ struct CompetitionsView: View {
 }
 
 #Preview {
-    CompetitionsView(selectedCompetitionId: .constant(9))
+    CompetitionsView()
+        .environmentObject(CompetitionsViewModel())
 }

@@ -98,12 +98,12 @@ struct StandingTeamStatsRow: View {
 
 struct StandingsView: View {
     @StateObject private var viewModel = StandingsViewModel()
-    @State var competitionId: Int = 9
+    @EnvironmentObject var competitionsViewModel: CompetitionsViewModel
 
-    @State private var displayCompetitionsPopover: Bool = false
-
-    init(competitionId: Int) {
-        self.competitionId = competitionId
+    @State private var displayCompetitionsPopover: Bool = true
+    
+    init(displayCompetitionsPopover: Bool) {
+        self.displayCompetitionsPopover = displayCompetitionsPopover
     }
 
     var body: some View {
@@ -112,13 +112,10 @@ struct StandingsView: View {
                 ProgressView {
                     Text("Loading...")
                 }
-                .task {
-                    await viewModel.handleStandings(competitionId: competitionId)
-                }
 
             } else {
                 tableView
-                    .navigationTitle(viewModel.leagueTitle)
+                    .navigationTitle(competitionsViewModel.selectedCompetition?.displayName ?? "...")
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbar {
                         ToolbarItemGroup(placement: .primaryAction) {
@@ -129,14 +126,18 @@ struct StandingsView: View {
                             }
                         }
                     }
-                    .onChange(of: competitionId) { _, newValue in
-                        viewModel.reset(competitionId: newValue)
-                        displayCompetitionsPopover = false
-                    }
-                    .popover(isPresented: $displayCompetitionsPopover) {
-                        CompetitionsView(selectedCompetitionId: $competitionId)
-                    }
             }
+        }
+        .onChange(of: competitionsViewModel.selectedCompetition) { _, newValue in
+            if let competitionId = newValue?.id {
+                viewModel.reset(competitionId: competitionId)
+                displayCompetitionsPopover = false
+            }
+        }
+        .sheet(isPresented: $displayCompetitionsPopover) {
+            CompetitionsView()
+                .environmentObject(competitionsViewModel)
+                .interactiveDismissDisabled()
         }
     }
 
@@ -193,5 +194,5 @@ struct StandingsView: View {
 }
 
 #Preview {
-    StandingsView(competitionId: 9)
+    StandingsView(displayCompetitionsPopover: true)
 }
