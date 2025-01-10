@@ -75,7 +75,8 @@ struct FixtureResponse: HTTPResponse {
     let homeTeam: String
 //    let xgData: XgDataResponse?
     let awayTeam: String
-    let score: String
+    let homeTeamScore: Int?
+    let awayTeamScore: Int?
     let date: DateResponse
 //    let attendance: String?
 //    let venue: String?

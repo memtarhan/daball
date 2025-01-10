@@ -50,31 +50,80 @@ struct FixtureWeeksView: View {
     }
 }
 
+struct ScoreRow: View {
+    var data: ScoreModel
+    var body: some View {
+        VStack(alignment: .leading) {
+            VStack {
+                HStack {
+                    Text(data.homeTeam)
+                    Spacer()
+                    Text(data.homeTeamScore)
+                }
+                .font(getFontForHomeTeam(data))
+                HStack {
+                    Text(data.awayTeam)
+                    Spacer()
+                    Text(data.awayTeamScore)
+                }
+                .font(getFontForAwayTeam(data))
+            }
+            Text(data.time)
+                .font(.caption)
+                .padding(.top, 4)
+        }
+    }
+
+    func getFontForHomeTeam(_ data: ScoreModel) -> Font {
+        if data.alreadyPlayed {
+            return data.isHomeTeamWinner ? Font.headline.weight(.medium) : Font.headline.weight(.thin)
+
+        } else {
+            return Font.headline.weight(.regular)
+        }
+    }
+
+    func getFontForAwayTeam(_ data: ScoreModel) -> Font {
+        if data.alreadyPlayed {
+            return data.isHomeTeamWinner ? Font.headline.weight(.thin) : Font.headline.weight(.medium)
+
+        } else {
+            return Font.headline.weight(.regular)
+        }
+    }
+}
+
 struct ScoresView: View {
-    var data: [ScoreModel]
+    var data: [SectionedScoreModels]
+    @Binding var expandedSections: [SectionedScoreModels]
 
     var body: some View {
-        ScrollView {
-            VStack {
-                ForEach(data) { scoreModel in
-                    VStack {
-                        Text(scoreModel.date)
-                        HStack {
-                            Text(scoreModel.homeTeam)
-                            Text(scoreModel.score)
-                            Text(scoreModel.awayTeam)
+        List(data) { sectionData in
+            Section(header: HStack {
+                Image(systemName: "calendar.badge.clock")
+                Text(sectionData.section)
+                Spacer()
+                Button {
+                    if expandedSections.contains(where: { $0.section == sectionData.section }) {
+                        expandedSections.removeAll(where: { $0.section == sectionData.section })
+                        
+                    } else {
+                        expandedSections.append(sectionData)
+                    }
+                } label: {
+                    Image(systemName: expandedSections.contains(where: { $0.section == sectionData.section }) ? "chevron.up" : "chevron.down")
+                }
+            }) {
+                if expandedSections.contains(where: { $0.section == sectionData.section }) {
+                    withAnimation(.easeInOut(duration: 1)) {
+                        ForEach(sectionData.scores) { scoredata in
+                            ScoreRow(data: scoredata)
                         }
                     }
-                    .padding()
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(Color.primary, style: StrokeStyle(lineWidth: 1, dash: [10]))
-                    )
-                    .frame(minWidth: 0, maxWidth: .infinity)
-                    .padding()
                 }
             }
         }
+        .listStyle(.plain)
     }
 }
 
@@ -86,11 +135,11 @@ struct FixturesView: View {
 
     var body: some View {
         NavigationStack {
-            VStack {
+            VStack(spacing: 0) {
                 FixtureWeeksView(data: viewModel.weeks, selectedWeek: $viewModel.selectedWeek)
                     .frame(height: 36)
 
-                ScoresView(data: viewModel.scores)
+                ScoresView(data: viewModel.scores, expandedSections: $viewModel.expandedSections)
             }
             .navigationTitle(competitionsViewModel.selectedCompetition?.displayName ?? "...")
             .navigationBarTitleDisplayMode(.inline)
@@ -113,7 +162,7 @@ struct FixturesView: View {
                 displayCompetitionsPopover = false
             }
         }
-        .onChange(of: viewModel.selectedWeek, { oldValue, newValue in
+        .onChange(of: viewModel.selectedWeek, { _, _ in
             viewModel.handleSelectedWeeksFixture()
         })
         .sheet(isPresented: $displayCompetitionsPopover) {
