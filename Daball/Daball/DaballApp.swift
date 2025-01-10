@@ -9,9 +9,12 @@ import SwiftUI
 
 @main
 struct DaballApp: App {
+    @StateObject var competitionsViewModel: CompetitionsViewModel = CompetitionsViewModel()
+
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(competitionsViewModel)
         }
     }
 }

@@ -100,11 +100,11 @@ struct StandingsView: View {
     @StateObject private var viewModel = StandingsViewModel()
     @EnvironmentObject var competitionsViewModel: CompetitionsViewModel
 
-    @State private var displayCompetitionsPopover: Bool = true
+    @State private var displayCompetitionsPopover: Bool = false
 
-    init(displayCompetitionsPopover: Bool) {
-        self.displayCompetitionsPopover = displayCompetitionsPopover
-    }
+//    init(displayCompetitionsPopover: Bool) {
+//        self.displayCompetitionsPopover = displayCompetitionsPopover
+//    }
 
     var body: some View {
         NavigationStack {
@@ -126,6 +126,14 @@ struct StandingsView: View {
                             }
                         }
                     }
+            }
+        }
+        .task {
+            if let competitionId = competitionsViewModel.selectedCompetition?.id {
+                viewModel.reset(competitionId: competitionId)
+                displayCompetitionsPopover = false
+            } else {
+                displayCompetitionsPopover = true
             }
         }
         .onChange(of: competitionsViewModel.selectedCompetition) { _, newValue in
@@ -164,7 +172,6 @@ struct StandingsView: View {
                         .scrollTransition(axis: .vertical) { content, phase in
                             content
                                 .opacity(phase.isIdentity ? 1 : 0)
-                                .scaleEffect(phase.isIdentity ? 1 : 0.75)
                                 .blur(radius: phase.isIdentity ? 0 : 10)
                         }
                     }
@@ -196,7 +203,6 @@ struct StandingsView: View {
                             .scrollTransition(axis: .vertical) { content, phase in
                                 content
                                     .opacity(phase.isIdentity ? 1 : 0)
-                                    .scaleEffect(phase.isIdentity ? 1 : 0.75)
                                     .blur(radius: phase.isIdentity ? 0 : 10)
                                 
                             }
@@ -212,6 +218,6 @@ struct StandingsView: View {
 }
 
 #Preview {
-    StandingsView(displayCompetitionsPopover: true)
+    StandingsView()
         .environmentObject(CompetitionsViewModel())
 }

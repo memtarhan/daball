@@ -168,11 +168,18 @@ struct FixturesView: View {
                         .foregroundStyle(Color.primary.opacity(0.5))
 
                 } else {
-                    VStack(spacing: 0) {
-                        FixtureWeeksView(data: viewModel.weeks, selectedWeek: $viewModel.selectedWeek)
-                            .frame(height: 36)
+                    if viewModel.loading {
+                        ProgressView {
+                            Text("Loading...")
+                        }
 
-                        ScoresView(data: viewModel.scores, expandedSections: $viewModel.expandedSections, isRefreshing: $isRefreshing)
+                    } else {
+                        VStack(spacing: 0) {
+                            FixtureWeeksView(data: viewModel.weeks, selectedWeek: $viewModel.selectedWeek)
+                                .frame(height: 36)
+
+                            ScoresView(data: viewModel.scores, expandedSections: $viewModel.expandedSections, isRefreshing: $isRefreshing)
+                        }
                     }
                 }
             }
@@ -188,7 +195,10 @@ struct FixturesView: View {
                 }
             }
             .task {
-//                await viewModel.handleFixtures(competitionId: competitionsViewModel.selectedCompetition!.id)
+                if let competitionId = competitionsViewModel.selectedCompetition?.id {
+                    viewModel.reset(competitionId: competitionId)
+                    displayCompetitionsPopover = false
+                }
             }
         }
         .onChange(of: competitionsViewModel.selectedCompetition) { _, newValue in

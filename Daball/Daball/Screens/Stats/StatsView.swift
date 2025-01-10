@@ -125,14 +125,12 @@ struct StatsView: View {
                 .environmentObject(competitionsViewModel)
                 .interactiveDismissDisabled()
         }
-//        .task {
-//            if let competitionId = competitionsViewModel.selectedCompetition?.id {
-//                await viewModel.handleStats(competitionId: competitionId)
-//
-//            } else {
-//                await viewModel.handleStats(competitionId: 9)
-//            }
-//        }
+        .task {
+            if let competitionId = competitionsViewModel.selectedCompetition?.id {
+                viewModel.reset(competitionId: competitionId)
+                displayCompetitionsPopover = false
+            }
+        }
     }
 }
 

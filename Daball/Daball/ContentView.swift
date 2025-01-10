@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct ContentView: View {
-    @StateObject var competitionsViewModel: CompetitionsViewModel = CompetitionsViewModel()
+    @EnvironmentObject var competitionsViewModel: CompetitionsViewModel
 
     var body: some View {
         TabView {
-            StandingsView(displayCompetitionsPopover: competitionsViewModel.selectedCompetition == nil)
+            StandingsView()
                 .environmentObject(competitionsViewModel)
                 .tabItem {
                     Label("Standings", systemImage: "table")
