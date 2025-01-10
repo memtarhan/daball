@@ -13,7 +13,9 @@ struct StatModel: Identifiable {
     let shortDescription: String
     let value: Double
 
-    var id: String { description + shortDescription + "\(value)" }
+    var id: String {
+        description + shortDescription + "\(value)"
+    }
 }
 
 struct StandingModel: Identifiable {
@@ -21,28 +23,66 @@ struct StandingModel: Identifiable {
     let name: String
     let logo: String
     let stats: [StatModel]
-
-    var id: Int { rank }
-
+    
+    var id: Int {
+        rank
+    }
+    
     static let sample = [
-        StandingModel(rank: 1,
-                      name: "Liverpool",
-                      logo: "https://cdn.ssref.net/req/202501061/tlogo/fb/mini.822bd0ba.png",
-                      stats: [
-                          StatModel(description: "Games", shortDescription: "MP", value: 19),
-                          StatModel(description: "Wins", shortDescription: "W", value: 14),
-                          StatModel(description: "Ties", shortDescription: "D", value: 4),
-                          StatModel(description: "Losses", shortDescription: "L", value: 1),
-                      ]),
-        StandingModel(rank: 2,
-                      name: "Arsenal",
-                      logo: "https://cdn.ssref.net/req/202501061/tlogo/fb/mini.18bb7c10.png",
-                      stats: [
-                          StatModel(description: "Games", shortDescription: "MP", value: 20),
-                          StatModel(description: "Wins", shortDescription: "W", value: 11),
-                          StatModel(description: "Ties", shortDescription: "D", value: 7),
-                          StatModel(description: "Losses", shortDescription: "L", value: 2),
-                      ]),
+        StandingModel(
+            rank: 1,
+            name: "Liverpool",
+            logo: "https://cdn.ssref.net/req/202501061/tlogo/fb/mini.822bd0ba.png",
+            stats: [
+                StatModel(
+                    description: "Games",
+                    shortDescription: "MP",
+                    value: 19
+                ),
+                StatModel(
+                    description: "Wins",
+                    shortDescription: "W",
+                    value: 14
+                ),
+                StatModel(
+                    description: "Ties",
+                    shortDescription: "D",
+                    value: 4
+                ),
+                StatModel(
+                    description: "Losses",
+                    shortDescription: "L",
+                    value: 1
+                ),
+            ]
+        ),
+        StandingModel(
+            rank: 2,
+            name: "Arsenal",
+            logo: "https://cdn.ssref.net/req/202501061/tlogo/fb/mini.18bb7c10.png",
+            stats: [
+                StatModel(
+                    description: "Games",
+                    shortDescription: "MP",
+                    value: 20
+                ),
+                StatModel(
+                    description: "Wins",
+                    shortDescription: "W",
+                    value: 11
+                ),
+                StatModel(
+                    description: "Ties",
+                    shortDescription: "D",
+                    value: 7
+                ),
+                StatModel(
+                    description: "Losses",
+                    shortDescription: "L",
+                    value: 2
+                ),
+            ]
+        ),
     ]
 }
 
@@ -51,37 +91,76 @@ class StandingsViewModel: ObservableObject, StandingsService {
     @Published var standings: [StandingModel] = []
     @Published var leagueTitle: String = ""
     @Published var loading: Bool = true
-
-    func reset(competitionId: Int) {
+    
+    func reset(
+        competitionId: Int
+    ) {
         loading = true
-        standings.removeAll()
+        standings
+            .removeAll()
         leagueTitle = ""
-
-        Task { await handleStandings(competitionId: competitionId) }
+        
+        Task {
+            await handleStandings(
+                competitionId: competitionId
+            )
+        }
     }
-
-    func handleStandings(competitionId: Int) async {
+    
+    func handleStandings(
+        competitionId: Int
+    ) async {
         loading = true
         do {
-            let response = try await getStandings(competitionId: competitionId)
+            let response = try await getStandings(
+                competitionId: competitionId
+            )
             leagueTitle = response.leagueTitle
-
-            standings = response.standings.map { standing in
-                var stats =  standing.stats.map { stat in
-                    StatModel(description: stat.description, shortDescription: stat.shortDescription, value: stat.value)
+            
+            standings = response.standings
+                .map { standing in
+                    var stats =  standing.stats.map { stat in
+                        StatModel(
+                            description: stat.description,
+                            shortDescription: stat.shortDescription,
+                            value: stat.value
+                        )
+                    }
+                    stats
+                        .insert(
+                            StatModel(
+                                description: "Points",
+                                shortDescription: "P",
+                                value: Double(
+                                    standing.points
+                                )
+                            ),
+                            at: 1
+                        )
+                    stats
+                        .append(
+                            contentsOf: standing.xgStats.map { stat in
+                                StatModel(
+                                    description: stat.description,
+                                    shortDescription: stat.shortDescription,
+                                    value: stat.value
+                                )
+                            })
+                    
+                    return StandingModel(
+                        rank: standing.rank,
+                        name: standing.name,
+                        logo: standing.logo,
+                        stats: stats
+                    )
                 }
-                stats.insert(StatModel(description: "Points", shortDescription: "P", value: Double(standing.points)), at: 1)
-                stats.append(contentsOf: standing.xgStats.map { stat in
-                    StatModel(description: stat.description, shortDescription: stat.shortDescription, value: stat.value)
-                })
-                
-                return StandingModel(rank: standing.rank, name: standing.name, logo: standing.logo, stats: stats)
-            }
-
+            
             loading = false
-
+            
         } catch {
-            print(error.localizedDescription)
+            print(
+                error.localizedDescription
+            )
             loading = false
         }
     }

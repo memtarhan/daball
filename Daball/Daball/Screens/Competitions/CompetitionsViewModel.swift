@@ -17,26 +17,31 @@ struct CompetitionModel: Identifiable, Equatable {
 @MainActor
 class CompetitionsViewModel: ObservableObject, CompetitionsService {
     @Published var competitions: [CompetitionModel] = []
-    
+
     @Published var selectedCompetition: CompetitionModel? {
         didSet {
-            print(selectedCompetition!.displayName)
+            print(
+                selectedCompetition!.displayName
+            )
         }
     }
 
     func handleCompetitions() async {
         do {
             let response = try await getCompetitions()
-            competitions = response.map {
-                CompetitionModel(id: $0.id,
-                                 displayName: $0.displayName,
-                                 logo: $0.logo)
-            }
-            
-//            selectedCompetition = competitions.first
+            competitions = response
+                .map {
+                    CompetitionModel(
+                        id: $0.id,
+                        displayName: $0.displayName,
+                        logo: $0.logo
+                    )
+                }
 
         } catch {
-            print(error.localizedDescription)
+            print(
+                error.localizedDescription
+            )
         }
     }
 }

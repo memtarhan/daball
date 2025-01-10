@@ -123,7 +123,7 @@ struct StatsResponse: HTTPResponse {
 
 struct PlayerStatResponse: HTTPResponse {
     let title: String
-    let displayName: String
+    let id: String
     let items: [StatItemResponse]
 }
 
@@ -133,4 +133,5 @@ struct StatItemResponse: HTTPResponse {
     let player: String
     let team: String
     let value: Double
+    let rank: Int?
 }

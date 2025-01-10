@@ -8,24 +8,80 @@
 
 import SwiftUI
 
+struct StatSectionsView: View {
+    @Binding var data: [SectionedStatModel]
+    @Binding var selectedSection: SectionedStatModel?
+
+    var body: some View {
+        VStack {
+            scrollView
+                .frame(height: 36)
+            Divider()
+            if let items = selectedSection?.items {
+                List(items) { item in
+                    PlayerStatRow(data: item)
+                }
+                .listStyle(.plain)
+            }
+        }
+    }
+
+    var scrollView: some View {
+        ScrollViewReader { scrollProxy in
+            ScrollView(.horizontal) {
+                HStack(spacing: 0) {
+                    ForEach(data) { section in
+                        Text(section.title)
+                            .foregroundStyle(selectedSection == section ? Color.red : Color.primary)
+                            .padding(12)
+                            .onTapGesture {
+                                selectedSection = section
+                                withAnimation {
+                                    scrollProxy.scrollTo(section.id, anchor: .center)
+                                }
+                            }
+                            .id(section.id)
+                            .onAppear {
+                                if selectedSection != nil {
+                                    withAnimation {
+                                        scrollProxy.scrollTo(selectedSection!, anchor: .center)
+                                    }
+                                }
+                            }
+
+                        Divider()
+                    }
+                }
+            }
+        }
+    }
+}
+
 struct PlayerStatRow: View {
     var data: PlayerStatModel
 
     var body: some View {
-        HStack(alignment: .center, spacing: 32) {
-//            Text("1")
-//                .padding(8)
-//                .background(Color.green)
-//                .clipShape(Circle())
+        HStack(alignment: .center, spacing: 8) {
+            HStack {
+                if let rank = data.rank {
+                    Text(rank, format: .number)
+//                        .padding(4)
+                        .font(.title.weight(.ultraLight))
+                }
+            }
+            .frame(width: 36)
+
             VStack(alignment: .leading, spacing: 4) {
                 Text(data.player)
                     .font(.headline)
                 Text(data.team)
                     .font(.subheadline)
             }
+
             Spacer()
             Text(data.value, format: .number)
                 .font(.title3.weight(.semibold))
+                .padding(.trailing, 20)
         }
     }
 }
@@ -38,25 +94,18 @@ struct StatsView: View {
 
     var body: some View {
         NavigationStack {
-            List(viewModel.stats) { data in
-                Section(header: Text(data.title)) {
-                    ForEach(data.items) { item in
-                        PlayerStatRow(data: item)
+            StatSectionsView(data: $viewModel.stats, selectedSection: $viewModel.selectedSection)
+                .navigationTitle(competitionsViewModel.selectedCompetition?.displayName ?? "...")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItemGroup(placement: .primaryAction) {
+                        Button {
+                            displayCompetitionsPopover = true
+                        } label: {
+                            Image(systemName: displayCompetitionsPopover ? "chevron.up" : "chevron.down")
+                        }
                     }
                 }
-            }
-            .listStyle(.plain)
-            .navigationTitle(competitionsViewModel.selectedCompetition?.displayName ?? "...")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItemGroup(placement: .primaryAction) {
-                    Button {
-                        displayCompetitionsPopover = true
-                    } label: {
-                        Image(systemName: displayCompetitionsPopover ? "chevron.up" : "chevron.down")
-                    }
-                }
-            }
         }
         .onChange(of: competitionsViewModel.selectedCompetition) { _, newValue in
             if let competitionId = newValue?.id {
