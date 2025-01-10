@@ -29,7 +29,7 @@ struct ContentView: View {
             StatsView()
                 .environmentObject(competitionsViewModel)
                 .tabItem {
-                    Label("Stats", systemImage: "numbers")
+                    Label("Stats", systemImage: "chart.line.uptrend.xyaxis")
                 }
                 .tag(2)
         }

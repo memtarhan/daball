@@ -10,11 +10,10 @@ import SwiftUI
 
 struct WeekModel: Identifiable, Equatable {
     let number: Int
+    let matchesCount: Int
     let description: String
 
-    var id: Int {
-        number
-    }
+    var id: String { "\(number)-\(matchesCount)" }
 }
 
 struct ScoreModel: Identifiable {
@@ -111,36 +110,27 @@ class FixturesViewModel: ObservableObject, FixturesService {
     @Published var shouldDisplayNoFixturesAvailable: Bool = false
 
     private var response: FixturesResponse?
+    private var groupedFixtures: [[FixtureResponse]] = []
 
-    func reset(
-        competitionId: Int
-    ) {
+    func reset(competitionId: Int) {
         loading = true
-        weeks
-            .removeAll()
-        scores
-            .removeAll()
+        weeks.removeAll()
+        scores.removeAll()
         selectedWeek = nil
         leagueTitle = ""
 
         Task {
-            await handleFixtures(
-                competitionId: competitionId
-            )
+            await handleFixtures(competitionId: competitionId)
         }
     }
 
     func handleSelectedWeeksFixture() {
-        if let gameWeek = selectedWeek?.number,
-           let fixture = response?.fixtures[gameWeek - 1] {
-            scores
-                .removeAll()
-
-            let grouped = fixture.group(
-                by: {
-                    $0.date.date
-                })
-            scores = grouped
+        if let gameWeek = selectedWeek?.number {
+            scores.removeAll()
+            
+            let weeksFixture = groupedFixtures[gameWeek - 1]
+            
+            scores = weeksFixture.group(by: { $0.date.date })
                 .map { group in
                     let sectionTitle = group.first?.date.date
 
@@ -185,10 +175,12 @@ class FixturesViewModel: ObservableObject, FixturesService {
 
             } else {
                 leagueTitle = response.leagueTitle
-                weeks = response.fixtures
+                groupedFixtures = response.fixtures.group(by: { $0.gameWeek })
+                weeks = groupedFixtures
                     .map { fixture in
                         let weekModel = WeekModel(
                             number: fixture.first?.gameWeek ?? -1,
+                            matchesCount: fixture.count,
                             description: "WEEK \(fixture.first?.gameWeek ?? -1)"
                         )
                         if fixture.first?.gameWeek == response.nextWeek {

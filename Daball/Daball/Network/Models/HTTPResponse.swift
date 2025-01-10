@@ -64,8 +64,8 @@ struct StatResponse: HTTPResponse {
 
 struct FixturesResponse: HTTPResponse {
     let leagueTitle: String
-    let fixtures: [[FixtureResponse]]
-    let nextWeek: Int
+    let fixtures: [FixtureResponse]
+    let nextWeek: Int?
 }
 
 // MARK: - FixtureResponse
