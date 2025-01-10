@@ -101,7 +101,7 @@ struct StandingsView: View {
     @EnvironmentObject var competitionsViewModel: CompetitionsViewModel
 
     @State private var displayCompetitionsPopover: Bool = true
-    
+
     init(displayCompetitionsPopover: Bool) {
         self.displayCompetitionsPopover = displayCompetitionsPopover
     }
@@ -152,13 +152,21 @@ struct StandingsView: View {
                     Divider()
 
                     ForEach(viewModel.standings) { standing in
-                        StandingTeamInfoRow(data: standing)
-                            .frame(height: 45)
+                        VStack(spacing: 0) {
+                            StandingTeamInfoRow(data: standing)
+                                .frame(height: 45)
 
-                        Line()
-                            .stroke(style: .init(dash: [2]))
-                            .foregroundStyle(.primary).opacity(0.5)
-                            .frame(height: 1)
+                            Line()
+                                .stroke(style: .init(dash: [2]))
+                                .foregroundStyle(.primary).opacity(0.5)
+                                .frame(height: 1)
+                        }
+                        .scrollTransition(axis: .vertical) { content, phase in
+                            content
+                                .opacity(phase.isIdentity ? 1 : 0)
+                                .scaleEffect(phase.isIdentity ? 1 : 0.75)
+                                .blur(radius: phase.isIdentity ? 0 : 10)
+                        }
                     }
 
                     Spacer()
@@ -175,13 +183,23 @@ struct StandingsView: View {
                             Divider()
                         }
                         ForEach(viewModel.standings) { standing in
-                            StandingTeamStatsRow(data: standing)
-                                .frame(height: 45)
+                            VStack(spacing: 0) {
+                                StandingTeamStatsRow(data: standing)
+                                    .frame(height: 45)
 
-                            Line()
-                                .stroke(style: .init(dash: [2]))
-                                .foregroundStyle(.primary).opacity(0.5)
-                                .frame(height: 1)
+                                Line()
+                                    .stroke(style: .init(dash: [2]))
+                                    .foregroundStyle(.primary).opacity(0.5)
+                                    .frame(height: 1)
+                            }
+                            
+                            .scrollTransition(axis: .vertical) { content, phase in
+                                content
+                                    .opacity(phase.isIdentity ? 1 : 0)
+                                    .scaleEffect(phase.isIdentity ? 1 : 0.75)
+                                    .blur(radius: phase.isIdentity ? 0 : 10)
+                                
+                            }
                         }
 
                         Spacer()
@@ -195,4 +213,5 @@ struct StandingsView: View {
 
 #Preview {
     StandingsView(displayCompetitionsPopover: true)
+        .environmentObject(CompetitionsViewModel())
 }
