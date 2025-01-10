@@ -41,3 +41,13 @@ extension FixturesEndpointsService {
         URL(string: "\(baseURL)/competitions/\(competitionId)/fixtures")
     }
 }
+
+protocol StatsEndpointsService: EndpointsService {
+    func getStatsURL(competitionId: Int) -> URL?
+}
+
+extension StatsEndpointsService {
+    func getStatsURL(competitionId: Int) -> URL? {
+        URL(string: "\(baseURL)/competitions/\(competitionId)/stats")
+    }
+}

@@ -20,20 +20,20 @@ struct ScoreModel: Identifiable {
     let awayTeam: String
     let homeTeamScore: String
     let awayTeamScore: String
-    let date: String
-    let time: String
+    let timeDescription: String
+    let venue: String?
 
-    var id: String { homeTeam + awayTeam + date }
+    var id: String { homeTeam + awayTeam + timeDescription }
 
     var alreadyPlayed: Bool { homeTeamScore != "-" && awayTeamScore != "-" }
     var isHomeTeamWinner: Bool { homeTeamScore > awayTeamScore }
 
-    static let sample = [
-        ScoreModel(homeTeam: "Manchester Utd", awayTeam: "Fulham", homeTeamScore: "1", awayTeamScore: "2", date: "2024-08-16", time: "16:00"),
-        ScoreModel(homeTeam: "Ipswich Town", awayTeam: "Liverpool", homeTeamScore: "2", awayTeamScore: "1", date: "2024-08-16", time: "20:00"),
-        ScoreModel(homeTeam: "Newcastle Utd", awayTeam: "Southampton", homeTeamScore: "-", awayTeamScore: "-", date: "2024-08-17", time: "15:00"),
-        ScoreModel(homeTeam: "Nott'ham Forest", awayTeam: "Bournemouth", homeTeamScore: "-", awayTeamScore: "-", date: "2024-08-18", time: "16:00"),
-    ]
+//    static let sample = [
+//        ScoreModel(homeTeam: "Manchester Utd", awayTeam: "Fulham", homeTeamScore: "1", awayTeamScore: "2", date: "2024-08-16", time: "16:00"),
+//        ScoreModel(homeTeam: "Ipswich Town", awayTeam: "Liverpool", homeTeamScore: "2", awayTeamScore: "1", date: "2024-08-16", time: "20:00"),
+//        ScoreModel(homeTeam: "Newcastle Utd", awayTeam: "Southampton", homeTeamScore: "-", awayTeamScore: "-", date: "2024-08-17", time: "15:00"),
+//        ScoreModel(homeTeam: "Nott'ham Forest", awayTeam: "Bournemouth", homeTeamScore: "-", awayTeamScore: "-", date: "2024-08-18", time: "16:00"),
+//    ]
 }
 
 struct SectionedScoreModels: Identifiable {
@@ -43,10 +43,10 @@ struct SectionedScoreModels: Identifiable {
     var id: String { section }
 
     static let sample = [
-        SectionedScoreModels(section: "2024-08-16", scores: [ScoreModel(homeTeam: "Manchester Utd", awayTeam: "Fulham", homeTeamScore: "1", awayTeamScore: "2", date: "2024-08-16", time: "16:00"),
-                                                             ScoreModel(homeTeam: "Ipswich Town", awayTeam: "Liverpool", homeTeamScore: "2", awayTeamScore: "1", date: "2024-08-16", time: "19:00")]),
-        SectionedScoreModels(section: "2024-08-17", scores: [ScoreModel(homeTeam: "Newcastle Utd", awayTeam: "Southampton", homeTeamScore: "-", awayTeamScore: "-", date: "2024-08-17", time: "16:00")]),
-        SectionedScoreModels(section: "2024-08-18", scores: [ScoreModel(homeTeam: "Nott'ham Forest", awayTeam: "Bournemouth", homeTeamScore: "-", awayTeamScore: "-", date: "2024-08-18", time: "20:00")]),
+        SectionedScoreModels(section: "2024-08-16", scores: [ScoreModel(homeTeam: "Manchester Utd", awayTeam: "Fulham", homeTeamScore: "1", awayTeamScore: "2", timeDescription: "Sat at 16:00", venue: "Some stadium"),
+                                                             ScoreModel(homeTeam: "Ipswich Town", awayTeam: "Liverpool", homeTeamScore: "2", awayTeamScore: "1", timeDescription: "Sat at 20:00", venue: "Some stadium")]),
+        SectionedScoreModels(section: "2024-08-17", scores: [ScoreModel(homeTeam: "Newcastle Utd", awayTeam: "Southampton", homeTeamScore: "-", awayTeamScore: "-", timeDescription: "Sun at 16:00", venue: "Some stadium")]),
+        SectionedScoreModels(section: "2024-08-18", scores: [ScoreModel(homeTeam: "Nott'ham Forest", awayTeam: "Bournemouth", homeTeamScore: "-", awayTeamScore: "-", timeDescription: "Sat at 20:00", venue: "Some stadium")]),
     ]
 }
 
@@ -64,6 +64,7 @@ class FixturesViewModel: ObservableObject, FixturesService {
     func reset(competitionId: Int) {
         loading = true
         weeks.removeAll()
+        scores.removeAll()
         selectedWeek = nil
         leagueTitle = ""
 
@@ -83,7 +84,7 @@ class FixturesViewModel: ObservableObject, FixturesService {
                     let homeTeamScore = scoreData.homeTeamScore != nil ? "\(scoreData.homeTeamScore!)" : "-"
                     let awayTeamScore = scoreData.awayTeamScore != nil ? "\(scoreData.awayTeamScore!)" : "-"
 
-                    return ScoreModel(homeTeam: scoreData.homeTeam, awayTeam: scoreData.awayTeam, homeTeamScore: homeTeamScore, awayTeamScore: awayTeamScore, date: scoreData.date.date, time: scoreData.date.startTime)
+                    return ScoreModel(homeTeam: scoreData.homeTeam, awayTeam: scoreData.awayTeam, homeTeamScore: homeTeamScore, awayTeamScore: awayTeamScore, timeDescription: "\(scoreData.date.dayOfWeek.rawValue.capitalized) at \(scoreData.date.startTime)", venue: scoreData.venue)
                 }
 
                 return SectionedScoreModels(section: sectionTitle ?? "Unknown", scores: scores)
@@ -114,7 +115,7 @@ class FixturesViewModel: ObservableObject, FixturesService {
                             let homeTeamScore = scoreData.homeTeamScore != nil ? "\(scoreData.homeTeamScore!)" : "-"
                             let awayTeamScore = scoreData.awayTeamScore != nil ? "\(scoreData.awayTeamScore!)" : "-"
 
-                            return ScoreModel(homeTeam: scoreData.homeTeam, awayTeam: scoreData.awayTeam, homeTeamScore: homeTeamScore, awayTeamScore: awayTeamScore, date: scoreData.date.date, time: scoreData.date.startTime)
+                            return ScoreModel(homeTeam: scoreData.homeTeam, awayTeam: scoreData.awayTeam, homeTeamScore: homeTeamScore, awayTeamScore: awayTeamScore, timeDescription: "\(scoreData.date.dayOfWeek.rawValue.capitalized) at \(scoreData.date.startTime)", venue: scoreData.venue)
                         }
 
                         return SectionedScoreModels(section: sectionTitle ?? "Unknown", scores: scores)

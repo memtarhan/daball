@@ -55,22 +55,43 @@ struct ScoreRow: View {
     var body: some View {
         VStack(alignment: .leading) {
             VStack {
-                HStack {
+                HStack(alignment: .lastTextBaseline) {
                     Text(data.homeTeam)
                     Spacer()
                     Text(data.homeTeamScore)
                 }
                 .font(getFontForHomeTeam(data))
-                HStack {
+                HStack(alignment: .lastTextBaseline) {
                     Text(data.awayTeam)
                     Spacer()
                     Text(data.awayTeamScore)
                 }
                 .font(getFontForAwayTeam(data))
             }
-            Text(data.time)
-                .font(.caption)
-                .padding(.top, 4)
+            HStack(alignment: .center) {
+                HStack(alignment: .center, spacing: 4) {
+                    Image(systemName: "calendar")
+                        .font(.title3.weight(.ultraLight))
+                        .foregroundStyle(Color.green)
+
+                    Text(data.timeDescription)
+                        .font(.caption)
+                }
+
+                Spacer()
+
+                if let venue = data.venue {
+                    HStack(alignment: .center, spacing: 4) {
+                        Image(systemName: "location.app")
+                            .font(.title3.weight(.ultraLight))
+                            .foregroundStyle(Color.green)
+
+                        Text(venue)
+                            .font(.caption)
+                    }
+                }
+            }
+            .padding(.top, 4)
         }
     }
 
@@ -96,6 +117,7 @@ struct ScoreRow: View {
 struct ScoresView: View {
     var data: [SectionedScoreModels]
     @Binding var expandedSections: [SectionedScoreModels]
+    @Binding var isRefreshing: Bool
 
     var body: some View {
         List(data) { sectionData in
@@ -106,7 +128,7 @@ struct ScoresView: View {
                 Button {
                     if expandedSections.contains(where: { $0.section == sectionData.section }) {
                         expandedSections.removeAll(where: { $0.section == sectionData.section })
-                        
+
                     } else {
                         expandedSections.append(sectionData)
                     }
@@ -124,6 +146,9 @@ struct ScoresView: View {
             }
         }
         .listStyle(.plain)
+        .refreshable {
+            isRefreshing.toggle()
+        }
     }
 }
 
@@ -132,6 +157,7 @@ struct FixturesView: View {
     @EnvironmentObject var competitionsViewModel: CompetitionsViewModel
 
     @State private var displayCompetitionsPopover: Bool = false
+    @State private var isRefreshing: Bool = false
 
     var body: some View {
         NavigationStack {
@@ -139,7 +165,7 @@ struct FixturesView: View {
                 FixtureWeeksView(data: viewModel.weeks, selectedWeek: $viewModel.selectedWeek)
                     .frame(height: 36)
 
-                ScoresView(data: viewModel.scores, expandedSections: $viewModel.expandedSections)
+                ScoresView(data: viewModel.scores, expandedSections: $viewModel.expandedSections, isRefreshing: $isRefreshing)
             }
             .navigationTitle(competitionsViewModel.selectedCompetition?.displayName ?? "...")
             .navigationBarTitleDisplayMode(.inline)
@@ -164,6 +190,9 @@ struct FixturesView: View {
         }
         .onChange(of: viewModel.selectedWeek, { _, _ in
             viewModel.handleSelectedWeeksFixture()
+        })
+        .onChange(of: isRefreshing, { oldValue, newValue in
+            viewModel.reset(competitionId: competitionsViewModel.selectedCompetition!.id)
         })
         .sheet(isPresented: $displayCompetitionsPopover) {
             CompetitionsView()

@@ -79,7 +79,7 @@ struct FixtureResponse: HTTPResponse {
     let awayTeamScore: Int?
     let date: DateResponse
 //    let attendance: String?
-//    let venue: String?
+    let venue: String?
 }
 
 // MARK: - DateResponse
@@ -111,4 +111,26 @@ struct XgDataResponse: HTTPResponse {
         case homeTeamXg = "home_team_xg"
         case awayTeamXg = "away_team_xg"
     }
+}
+
+// MARK: - StatsResponse
+
+struct StatsResponse: HTTPResponse {
+    let response: [PlayerStatResponse]
+}
+
+// MARK: - PlayerStatResponse
+
+struct PlayerStatResponse: HTTPResponse {
+    let title: String
+    let displayName: String
+    let items: [StatItemResponse]
+}
+
+// MARK: - StatItemResponse
+
+struct StatItemResponse: HTTPResponse {
+    let player: String
+    let team: String
+    let value: Double
 }

@@ -25,6 +25,13 @@ struct ContentView: View {
                     Label("Fixtures", systemImage: "calendar")
                 }
                 .tag(1)
+            
+            StatsView()
+                .environmentObject(competitionsViewModel)
+                .tabItem {
+                    Label("Stats", systemImage: "numbers")
+                }
+                .tag(2)
         }
     }
 }
