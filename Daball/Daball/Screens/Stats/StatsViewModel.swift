@@ -37,7 +37,12 @@ class StatsViewModel: ObservableObject, StatsService {
     @Published var stats: [SectionedStatModel] = []
     @Published var selectedSection: SectionedStatModel? = nil
 
-    func reset(competitionId: Int) { }
+    func reset(competitionId: Int) {
+        stats.removeAll()
+        selectedSection = nil
+        
+        Task { await handleStats(competitionId: competitionId) }
+    }
 
     func handleStats(competitionId: Int) async {
         loading = true

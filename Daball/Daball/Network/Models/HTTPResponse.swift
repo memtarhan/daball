@@ -36,14 +36,14 @@ struct StandingsResponse: HTTPResponse {
 struct StandingResponse: HTTPResponse {
     let rank: Int
     let points: Int
-    let pointsAvg: Double
+    let pointsAvg: Double?
     let name: String
     let logo: String
     let stats: [StatResponse]
     let xgStats: [StatResponse]
     let lastFiveGames: [LastFiveGame]
-    let topScorer: String
-    let topGoalKeeper: String
+    let topScorer: String?
+    let topGoalKeeper: String?
 }
 
 enum LastFiveGame: String, HTTPResponse {

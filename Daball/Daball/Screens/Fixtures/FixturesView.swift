@@ -162,10 +162,19 @@ struct FixturesView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                FixtureWeeksView(data: viewModel.weeks, selectedWeek: $viewModel.selectedWeek)
-                    .frame(height: 36)
+                if viewModel.shouldDisplayNoFixturesAvailable {
+                    Text("No fixtures available")
+                        .font(.largeTitle.weight(.medium))
+                        .foregroundStyle(Color.primary.opacity(0.5))
 
-                ScoresView(data: viewModel.scores, expandedSections: $viewModel.expandedSections, isRefreshing: $isRefreshing)
+                } else {
+                    VStack(spacing: 0) {
+                        FixtureWeeksView(data: viewModel.weeks, selectedWeek: $viewModel.selectedWeek)
+                            .frame(height: 36)
+
+                        ScoresView(data: viewModel.scores, expandedSections: $viewModel.expandedSections, isRefreshing: $isRefreshing)
+                    }
+                }
             }
             .navigationTitle(competitionsViewModel.selectedCompetition?.displayName ?? "...")
             .navigationBarTitleDisplayMode(.inline)
@@ -191,7 +200,7 @@ struct FixturesView: View {
         .onChange(of: viewModel.selectedWeek, { _, _ in
             viewModel.handleSelectedWeeksFixture()
         })
-        .onChange(of: isRefreshing, { oldValue, newValue in
+        .onChange(of: isRefreshing, { _, _ in
             viewModel.reset(competitionId: competitionsViewModel.selectedCompetition!.id)
         })
         .sheet(isPresented: $displayCompetitionsPopover) {

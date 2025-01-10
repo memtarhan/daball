@@ -94,18 +94,25 @@ struct StatsView: View {
 
     var body: some View {
         NavigationStack {
-            StatSectionsView(data: $viewModel.stats, selectedSection: $viewModel.selectedSection)
-                .navigationTitle(competitionsViewModel.selectedCompetition?.displayName ?? "...")
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItemGroup(placement: .primaryAction) {
-                        Button {
-                            displayCompetitionsPopover = true
-                        } label: {
-                            Image(systemName: displayCompetitionsPopover ? "chevron.up" : "chevron.down")
+            if viewModel.loading {
+                ProgressView {
+                    Text("Loading...")
+                }
+
+            } else {
+                StatSectionsView(data: $viewModel.stats, selectedSection: $viewModel.selectedSection)
+                    .navigationTitle(competitionsViewModel.selectedCompetition?.displayName ?? "...")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItemGroup(placement: .primaryAction) {
+                            Button {
+                                displayCompetitionsPopover = true
+                            } label: {
+                                Image(systemName: displayCompetitionsPopover ? "chevron.up" : "chevron.down")
+                            }
                         }
                     }
-                }
+            }
         }
         .onChange(of: competitionsViewModel.selectedCompetition) { _, newValue in
             if let competitionId = newValue?.id {
