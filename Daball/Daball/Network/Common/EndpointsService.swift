@@ -52,3 +52,13 @@ extension StatsEndpointsService {
         URL(string: "\(baseURL)/competitions/\(competitionId)/stats")
     }
 }
+
+protocol CurrentEndpointsService: EndpointsService {
+    func getCurrentURL() -> URL?
+}
+
+extension CurrentEndpointsService {
+    func getCurrentURL() -> URL? {
+        URL(string: "\(baseURL)/current")
+    }
+}

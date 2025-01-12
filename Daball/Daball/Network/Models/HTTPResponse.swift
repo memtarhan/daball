@@ -135,3 +135,42 @@ struct StatItemResponse: HTTPResponse {
     let value: Double
     let rank: Int?
 }
+
+// MARK: - CurrentResponse
+
+struct CurrentResponse: HTTPResponse {
+    let response: [CurrentDataResponse]
+}
+
+// MARK: - CurrentDataResponse
+
+struct CurrentDataResponse: HTTPResponse {
+    let leaders: [LeaderSimpleResponse]
+    let title: String
+    let country: String
+    let standings: [StandingSimpleResponse]
+}
+
+// MARK: - LeaderSimpleResponse
+
+struct LeaderSimpleResponse: HTTPResponse {
+    let players: [String]
+    let value: Double
+    let description: String
+}
+
+// MARK: - StandingSimpleResponse
+
+struct StandingSimpleResponse: HTTPResponse {
+    let team: String
+    let stats: [StatSimpleResponse]
+    let rank: String
+}
+
+// MARK: - StatSimpleResponse
+
+struct StatSimpleResponse: HTTPResponse {
+    let value: String
+    let shortDescription: String
+    let description: String
+}

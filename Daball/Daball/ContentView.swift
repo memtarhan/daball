@@ -12,26 +12,31 @@ struct ContentView: View {
 
     var body: some View {
         TabView {
+            CurrentView()
+                .tabItem {
+                    Label("Current", systemImage: "timelapse")
+                }
+                .tag(0)
             StandingsView()
                 .environmentObject(competitionsViewModel)
                 .tabItem {
                     Label("Standings", systemImage: "table")
                 }
-                .tag(0)
+                .tag(1)
 
             FixturesView()
                 .environmentObject(competitionsViewModel)
                 .tabItem {
                     Label("Fixtures", systemImage: "calendar")
                 }
-                .tag(1)
+                .tag(2)
             
             StatsView()
                 .environmentObject(competitionsViewModel)
                 .tabItem {
                     Label("Stats", systemImage: "chart.line.uptrend.xyaxis")
                 }
-                .tag(2)
+                .tag(3)
         }
     }
 }
