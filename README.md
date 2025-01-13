@@ -1,3 +1,3 @@
 # All about football 
 
-![Current-1]([https://github.com/memtarhan/daball/blob/main/current-1.png])
+![Current-1]([https://github.com/memtarhan/daball/blob/main/current-1.jpg])
