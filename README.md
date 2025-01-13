@@ -1,8 +1,9 @@
 # All about football 
 
+![current-1](https://github.com/user-attachments/assets/8ad85dbb-890b-4650-996c-20f91699674e)
+![current-2](https://github.com/user-attachments/assets/032b85c6-e939-4767-bb2b-32f908e874ff)
+![standings](https://github.com/user-attachments/assets/64868b3e-f20b-480a-b4a3-432b1dd89bfd)
+![fixtures](https://github.com/user-attachments/assets/9246d4e3-c107-4bb7-84bd-9e4e05012067)
+![stats](https://github.com/user-attachments/assets/89303ce0-e387-422a-ad23-bfe88e1a7ae2)
 
-![stats](https://github.com/user-attachments/assets/bfc7bc1e-3d00-4b8b-a1d0-d2cf85cea133)
-![standings](https://github.com/user-attachments/assets/b0363090-4d67-447c-952c-83e4b166772d)
-![fixtures](https://github.com/user-attachments/assets/b0246d87-7dd1-4c00-84f7-1b57cde65d64)
-![current-2](https://github.com/user-attachments/assets/5e6298e9-f367-40d5-a146-ebfa6372e1b8)
-![current-1](https://github.com/user-attachments/assets/4aefbfd9-8e2c-4b0f-9ee7-4e699058b521)
+
