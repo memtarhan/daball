@@ -1,3 +1,4 @@
 # All about football 
 
-![alt text]([https://github.com/memtarhan/daball/blob/[branch]/image.jpg?raw=true](https://github.com/memtarhan/daball/blob/main/Simulator%20Screenshot%20-%20iPhone%2016%20Pro%20-%202025-01-13%20at%2014.06.35.png?raw=true))
+![Alt text](Simulator Screenshot - iPhone 16 Pro - 2025-01-13 at 14.06.35.png)
+
