@@ -7,40 +7,86 @@
 
 import SwiftUI
 
-struct ContentView: View {
+struct DaballTabView: View {
     @EnvironmentObject var competitionsViewModel: CompetitionsViewModel
 
-    var body: some View {
-        TabView {
-            CurrentView()
-                .tabItem {
-                    Label("Current", systemImage: "timelapse")
-                }
-                .tag(0)
-            StandingsView()
-                .environmentObject(competitionsViewModel)
-                .tabItem {
-                    Label("Standings", systemImage: "table")
-                }
-                .tag(1)
+    @State var selectedTab = 0
 
-            FixturesView()
-                .environmentObject(competitionsViewModel)
-                .tabItem {
-                    Label("Fixtures", systemImage: "calendar")
+    var body: some View {
+        ZStack(alignment: .bottom) {
+            TabView(selection: $selectedTab) {
+                CurrentView()
+                    .tag(0)
+                    .toolbarBackground(Color.systemBackground, for: .tabBar)
+                StandingsView()
+                    .environmentObject(competitionsViewModel)
+                    .tag(1)
+                    .toolbarBackground(Color.systemBackground, for: .tabBar)
+
+                FixturesView()
+                    .environmentObject(competitionsViewModel)
+                    .tag(2)
+                    .toolbarBackground(Color.systemBackground, for: .tabBar)
+
+                StatsView()
+                    .environmentObject(competitionsViewModel)
+                    .tag(3)
+                    .toolbarBackground(Color.systemBackground, for: .tabBar)
+            }
+            ZStack {
+                GeometryReader { proxy in
+
+                    HStack {
+                        ForEach(TabItem.allCases, id: \.self) { item in
+                            Button {
+                                withAnimation(.easeInOut) {
+                                    selectedTab = item.rawValue
+                                }
+                            } label: {
+                                createTabItem(imageName: item.iconName,
+                                              title: item.title,
+                                              isActive: selectedTab == item.rawValue,
+                                              totalWidth: proxy.size.width)
+                            }
+                        }
+                    }
+                    .offset(y: 10)
                 }
-                .tag(2)
-            
-            StatsView()
-                .environmentObject(competitionsViewModel)
-                .tabItem {
-                    Label("Stats", systemImage: "chart.line.uptrend.xyaxis")
-                }
-                .tag(3)
+                .padding(.horizontal, 6)
+            }
+            .frame(height: 64, alignment: .bottom)
+            .background(Color.tabBarBackground.opacity(0.25))
+            .clipShape(Capsule())
+            .padding(.horizontal, 26)
+            .offset(y: 18)
         }
     }
 }
 
+extension DaballTabView {
+    func createTabItem(imageName: String, title: String, isActive: Bool, totalWidth: CGFloat) -> some View {
+        HStack(spacing: 10) {
+            Spacer()
+            Image(systemName: imageName)
+                .resizable()
+                .renderingMode(.template)
+                .foregroundColor(isActive ? Color.primary : Color.secondary)
+                .frame(width: 18, height: 18)
+            if isActive {
+                Text(title)
+                    .font(.subheadline)
+                    .foregroundColor(isActive ? Color.primary : Color.secondary)
+            }
+            Spacer()
+        }
+        .frame(width: isActive ? totalWidth / 2.5 : 44, height: 44)
+        .background(isActive ? Color.tabBarBackground.opacity(0.5) : .clear)
+        .clipShape(Capsule())
+    }
+}
+
+
 #Preview {
-    ContentView()
+    DaballTabView()
+        .environmentObject(CompetitionsViewModel())
 }

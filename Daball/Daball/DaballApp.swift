@@ -13,7 +13,7 @@ struct DaballApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            DaballTabView()
                 .environmentObject(competitionsViewModel)
         }
     }
