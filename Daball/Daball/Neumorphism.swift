@@ -50,8 +50,8 @@ struct ColorfulBackground<S: Shape>: View {
                     .shadow(color: Color.element, radius: 10, x: -5, y: -5)
             } else {
                 shape
-                    .fill(LinearGradient(Color.lightEnd.opacity(0.8), Color.lightStart.opacity(0.8)))
-                    .northWestShadow()
+                    .fill(LinearGradient(Color.lightEnd.opacity(0.6), Color.lightStart.opacity(0.6)))
+//                    .northWestShadow()
             }
         }
     }

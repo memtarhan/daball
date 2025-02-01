@@ -46,8 +46,8 @@ struct DaballTabView: View {
             .frame(height: 64, alignment: .bottom)
             .padding(.horizontal, 26)
             .offset(y: 18)
-            .shadow(color: Color.black.opacity(0.2), radius: 10, x: 10, y: 10)
-            .shadow(color: Color.white.opacity(0.7), radius: 10, x: -5, y: -5)
+            .shadow(color: Color.systemBackground.opacity(1), radius: 10, x: 10, y: 10)
+            .shadow(color: Color.systemBackground.opacity(0.1), radius: 10, x: -15, y: -15)
     }
 
     private var tabView: some View {

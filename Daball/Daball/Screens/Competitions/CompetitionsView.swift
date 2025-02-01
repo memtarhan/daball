@@ -27,14 +27,19 @@ struct CompetitionRow: View {
     var competition: CompetitionModel
 
     var body: some View {
-        HStack {
-            CompetitionLogoView(url: competition.logo)
-            Text(competition.displayName)
-                .font(.title3.weight(.light))
-            Spacer()
-            Image(systemName: "chevron.right")
-                .foregroundStyle(Color.primary.opacity(0.5))
+        VStack(spacing: 0) {
+            HStack {
+                CompetitionLogoView(url: competition.logo)
+                Text(competition.displayName)
+                    .font(.subheadline)
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .foregroundStyle(Color.primary.opacity(0.5))
+            }
+
+            Divider()
         }
+        .padding(.horizontal, 32)
     }
 }
 
@@ -44,18 +49,24 @@ struct CompetitionsView: View {
 
     var body: some View {
         NavigationStack {
-            List {
-                ForEach(viewModel.competitions) { competition in
-                    CompetitionRow(competition: competition)
-                        .onTapGesture {
-                            viewModel.selectedCompetition = competition
-                            withAnimation(Animation.bouncy.delay(0.5)) {
-                                dismiss()
+            ZStack {
+                LinearGradient(gradient: Gradient(colors: [.blue, .blue.opacity(0.8), .blue.opacity(0.6), .blue.opacity(0.4), .blue.opacity(0.2), .blue.opacity(0)]), startPoint: .trailing, endPoint: .leading)
+                    .ignoresSafeArea(.all)
+
+                ScrollView {
+                    ForEach(viewModel.competitions) { competition in
+                        CompetitionRow(competition: competition)
+                            .onTapGesture {
+                                viewModel.selectedCompetition = competition
+                                withAnimation(Animation.bouncy.delay(0.5)) {
+                                    dismiss()
+                                }
                             }
-                        }
+                    }
                 }
             }
-            .navigationTitle("Competitions")
+            .navigationTitle("Select a Competition")
+            .navigationBarTitleDisplayMode(.inline)
             .task {
                 await viewModel.handleCompetitions()
             }
