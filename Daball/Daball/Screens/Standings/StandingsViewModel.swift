@@ -12,6 +12,7 @@ struct StatModel: Identifiable {
     let description: String
     let shortDescription: String
     let value: Double
+    var tooltip: String? = nil
 
     var id: String {
         description + shortDescription + "\(value)"
@@ -123,27 +124,29 @@ class StandingsViewModel: ObservableObject, StandingsService {
                         StatModel(
                             description: stat.description,
                             shortDescription: stat.shortDescription,
-                            value: stat.value
+                            value: stat.value,
+                            tooltip: response.statTypes.first(where: { $0.shortDescription == stat.shortDescription})?.description
                         )
                     }
-                    stats
-                        .insert(
-                            StatModel(
-                                description: "Points",
-                                shortDescription: "P",
-                                value: Double(
-                                    standing.points
-                                )
-                            ),
-                            at: 1
-                        )
+//                    stats
+//                        .insert(
+//                            StatModel(
+//                                description: "Points",
+//                                shortDescription: "P",
+//                                value: Double(
+//                                    standing.points
+//                                )
+//                            ),
+//                            at: 1
+//                        )
                     stats
                         .append(
                             contentsOf: standing.xgStats.map { stat in
                                 StatModel(
                                     description: stat.description,
                                     shortDescription: stat.shortDescription,
-                                    value: stat.value
+                                    value: stat.value,
+                                    tooltip: response.statTypes.first(where: { $0.shortDescription == stat.shortDescription})?.description
                                 )
                             })
                     

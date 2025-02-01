@@ -29,6 +29,7 @@ struct CompetitionResponse: HTTPResponse {
 struct StandingsResponse: HTTPResponse {
     let leagueTitle: String
     let standings: [StandingResponse]
+    let statTypes: [StatTypeResponse]
 }
 
 // MARK: - StandingResponse
@@ -50,6 +51,14 @@ enum LastFiveGame: String, HTTPResponse {
     case win = "W"
     case draw = "D"
     case loss = "L"
+}
+
+// MARK: - StatTypeResponse
+
+struct StatTypeResponse: HTTPResponse {
+    let type: String
+    let description: String
+    let shortDescription: String
 }
 
 // MARK: - StatResponse
