@@ -21,17 +21,15 @@ struct StatModel: Identifiable {
 
 struct StandingModel: Identifiable {
     let rank: Int
+    let id: String
     let name: String
     let logo: String
     let stats: [StatModel]
-    
-    var id: Int {
-        rank
-    }
-    
+
     static let sample = [
         StandingModel(
             rank: 1,
+            id: "ab",
             name: "Liverpool",
             logo: "https://cdn.ssref.net/req/202501061/tlogo/fb/mini.822bd0ba.png",
             stats: [
@@ -59,6 +57,7 @@ struct StandingModel: Identifiable {
         ),
         StandingModel(
             rank: 2,
+            id: "ac",
             name: "Arsenal",
             logo: "https://cdn.ssref.net/req/202501061/tlogo/fb/mini.18bb7c10.png",
             stats: [
@@ -92,7 +91,7 @@ class StandingsViewModel: ObservableObject, StandingsService {
     @Published var standings: [StandingModel] = []
     @Published var leagueTitle: String = ""
     @Published var loading: Bool = true
-    
+
     func reset(
         competitionId: Int
     ) {
@@ -100,14 +99,14 @@ class StandingsViewModel: ObservableObject, StandingsService {
         standings
             .removeAll()
         leagueTitle = ""
-        
+
         Task {
             await handleStandings(
                 competitionId: competitionId
             )
         }
     }
-    
+
     func handleStandings(
         competitionId: Int
     ) async {
@@ -117,28 +116,18 @@ class StandingsViewModel: ObservableObject, StandingsService {
                 competitionId: competitionId
             )
             leagueTitle = response.leagueTitle
-            
+
             standings = response.standings
                 .map { standing in
-                    var stats =  standing.stats.map { stat in
+                    var stats = standing.stats.map { stat in
                         StatModel(
                             description: stat.description,
                             shortDescription: stat.shortDescription,
                             value: stat.value,
-                            tooltip: response.statTypes.first(where: { $0.shortDescription == stat.shortDescription})?.description
+                            tooltip: response.statTypes.first(where: { $0.shortDescription == stat.shortDescription })?.description
                         )
                     }
-//                    stats
-//                        .insert(
-//                            StatModel(
-//                                description: "Points",
-//                                shortDescription: "P",
-//                                value: Double(
-//                                    standing.points
-//                                )
-//                            ),
-//                            at: 1
-//                        )
+
                     stats
                         .append(
                             contentsOf: standing.xgStats.map { stat in
@@ -146,20 +135,21 @@ class StandingsViewModel: ObservableObject, StandingsService {
                                     description: stat.description,
                                     shortDescription: stat.shortDescription,
                                     value: stat.value,
-                                    tooltip: response.statTypes.first(where: { $0.shortDescription == stat.shortDescription})?.description
+                                    tooltip: response.statTypes.first(where: { $0.shortDescription == stat.shortDescription })?.description
                                 )
                             })
-                    
+
                     return StandingModel(
                         rank: standing.rank,
+                        id: standing.teamId,
                         name: standing.name,
                         logo: standing.logo,
                         stats: stats
                     )
                 }
-            
+
             loading = false
-            
+
         } catch {
             print(
                 error.localizedDescription

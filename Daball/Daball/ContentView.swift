@@ -17,21 +17,21 @@ struct DaballTabView: View {
             TabView(selection: $selectedTab) {
                 CurrentView()
                     .tag(0)
-                    .toolbarBackground(Color.systemBackground, for: .tabBar)
+                    .toolbarBackground(Color.clear, for: .tabBar)
                 StandingsView()
                     .environmentObject(competitionsViewModel)
                     .tag(1)
-                    .toolbarBackground(Color.systemBackground, for: .tabBar)
+                    .toolbarBackground(Color.clear, for: .tabBar)
 
                 FixturesView()
                     .environmentObject(competitionsViewModel)
                     .tag(2)
-                    .toolbarBackground(Color.systemBackground, for: .tabBar)
+                    .toolbarBackground(Color.clear, for: .tabBar)
 
                 StatsView()
                     .environmentObject(competitionsViewModel)
                     .tag(3)
-                    .toolbarBackground(Color.systemBackground, for: .tabBar)
+                    .toolbarBackground(Color.clear, for: .tabBar)
             }
             ZStack {
                 shadowView

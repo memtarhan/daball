@@ -62,3 +62,13 @@ extension CurrentEndpointsService {
         URL(string: "\(baseURL)/current")
     }
 }
+
+protocol TeamDetailsEndpointsService: EndpointsService {
+    func getDetailsURL(teamId: String) -> URL?
+}
+
+extension TeamDetailsEndpointsService {
+    func getDetailsURL(teamId: String) -> URL? {
+        URL(string: "\(baseURL)/teams/\(teamId)")
+    }
+}

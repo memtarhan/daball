@@ -39,6 +39,7 @@ struct StandingResponse: HTTPResponse {
     let points: Int
     let pointsAvg: Double?
     let name: String
+    let teamId: String
     let logo: String
     let stats: [StatResponse]
     let xgStats: [StatResponse]
@@ -182,4 +183,20 @@ struct StatSimpleResponse: HTTPResponse {
     let value: String
     let shortDescription: String
     let description: String
+}
+
+// MARK: - TeamResponse
+
+struct TeamResponse: HTTPResponse {
+    let title: String
+    let logo: String
+    let teamId: String
+    let details: [TeamDetailsResponse]
+}
+
+// MARK: - TeamDetailsResponse
+
+struct TeamDetailsResponse: HTTPResponse {
+    let description: String
+    let details: String
 }

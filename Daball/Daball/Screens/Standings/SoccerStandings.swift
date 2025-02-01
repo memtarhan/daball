@@ -73,8 +73,10 @@ struct StandingTeamInfoRow: View {
                 }
                 .frame(width: 24)
                 .padding(8)
-                Text(data.name)
-                    .font(.subheadline)
+                NavigationLink(destination: TeamDetailsView(teamId: data.id, teamName: data.name)) {
+                    Text(data.name)
+                        .font(.subheadline)
+                }.buttonStyle(PlainButtonStyle())
             }
             Spacer()
             Divider()
