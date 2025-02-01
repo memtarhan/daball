@@ -139,57 +139,64 @@ struct LeageRow: View {
     @Binding var expandedLeagues: [LeagueModel]
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            // Standings
+        ZStack {
+            RoundedRectangle(cornerRadius: 20)
+                .fill(Color.element)
+                .padding(.horizontal)
+                .northWestShadow()
+
             VStack(alignment: .leading, spacing: 0) {
-                HStack {
-                    Text(data.title)
-                        .font(.headline)
-                    Text(data.country)
-                        .font(.subheadline)
-                    Spacer()
-                    Button {
-                        withAnimation(.easeInOut(duration: 0.5)) {
-                            if expandedLeagues.contains(where: { $0.title == data.title }) {
-                                expandedLeagues.removeAll(where: { $0.title == data.title })
+                // Standings
+                VStack(alignment: .leading, spacing: 0) {
+                    HStack {
+                        Text(data.title)
+                            .font(.headline)
+                        Text(data.country)
+                            .font(.subheadline)
+                        Spacer()
+                        Button {
+                            withAnimation(.easeInOut(duration: 0.5)) {
+                                if expandedLeagues.contains(where: { $0.title == data.title }) {
+                                    expandedLeagues.removeAll(where: { $0.title == data.title })
 
-                            } else {
-                                expandedLeagues.append(data)
+                                } else {
+                                    expandedLeagues.append(data)
+                                }
                             }
+
+                        } label: {
+                            Image(systemName: expandedLeagues.contains(where: { $0.title == data.title }) ? "chevron.up" : "chevron.down")
+                                .foregroundStyle(Color.primary)
                         }
-
-                    } label: {
-                        Image(systemName: expandedLeagues.contains(where: { $0.title == data.title }) ? "chevron.up" : "chevron.down")
-                            .foregroundStyle(Color.primary)
                     }
-                }
-                .padding()
-                .background(Color.primary.tertiary)
+                    .padding()
+                    .background(Color.primary.tertiary)
 
-                if expandedLeagues.contains(where: { $0.title == data.title }) {
-                    VStack(alignment: .leading, spacing: 0) {
-                        LeagueStandingHeader(data: data)
+                    if expandedLeagues.contains(where: { $0.title == data.title }) {
+                        VStack(alignment: .leading, spacing: 0) {
+                            LeagueStandingHeader(data: data)
+                                .padding()
+                                .background(Color.primary.quaternary)
+
+                            Divider()
+
+                            VStack {
+                                ForEach(data.standings) { team in
+                                    LeagueStandingRow(data: team)
+                                    Divider()
+                                }
+                            }
                             .padding()
-                            .background(Color.primary.quaternary)
-
-                        Divider()
-
-                        VStack {
-                            ForEach(data.standings) { team in
-                                LeagueStandingRow(data: team)
-                                Divider()
-                            }
+                            .background(Color.primary.quinary)
                         }
-                        .padding()
-                        .background(Color.primary.quinary)
                     }
-                }
 
-                LeagueLeadersView(data: data.leaders)
+                    LeagueLeadersView(data: data.leaders)
+                }
             }
+            .clipShape(RoundedRectangle(cornerRadius: 20))
+            .padding(.horizontal)
         }
-        .clipShape(RoundedRectangle(cornerRadius: 20))
-        .padding(.horizontal)
     }
 }
 
@@ -198,21 +205,26 @@ struct CurrentView: View {
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
-                if viewModel.loading {
-                    ProgressView {
-                        Text("Loading...")
-                    }
+            ZStack {
+                Color.element
+                    .edgesIgnoringSafeArea(.all)
+                VStack(spacing: 0) {
+                    if viewModel.loading {
+                        ProgressView {
+                            Text("Loading...")
+                        }
 
-                } else {
-                    ScrollView {
-                        ForEach(viewModel.leagues) { league in
-                            LeageRow(data: league, expandedLeagues: $viewModel.expandedLeagues)
+                    } else {
+                        ScrollView {
+                            ForEach(viewModel.leagues) { league in
+                                LeageRow(data: league, expandedLeagues: $viewModel.expandedLeagues)
+//                                    .northWestShadow()
+                            }
                         }
                     }
                 }
+                .navigationTitle("Current")
             }
-            .navigationTitle("Current")
         }
         .task {
             await viewModel.handleCurrent()
