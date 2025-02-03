@@ -94,12 +94,19 @@ struct StandingResponse: HTTPResponse {
     let logo: String
     let stats: [StatResponse]
     let xgStats: [StatResponse]
-    let lastFiveGames: [LastFiveGame]
+    let lastFiveGames: [LastFiveGameResponse]
     let topScorer: String?
     let topGoalKeeper: String?
 }
 
-enum LastFiveGame: String, HTTPResponse {
+// MARK: - LastFiveGameResponse
+
+struct LastFiveGameResponse: HTTPResponse {
+    let id: String
+    let status: LastFiveGameStatus
+}
+
+enum LastFiveGameStatus: String, HTTPResponse {
     case win = "W"
     case draw = "D"
     case loss = "L"

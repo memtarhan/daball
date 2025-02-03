@@ -8,79 +8,72 @@
 
 import SwiftUI
 
+struct TeamInfoHeader: View {
+    var logo: String
+    var title: String
+
+    var body: some View {
+        HStack(alignment: .center) {
+            TeamLogoView(url: logo)
+                .frame(width: 48, height: 48)
+
+            Text(title)
+                .font(.headline)
+            Spacer()
+        }
+    }
+}
+
 struct TeamDetailsRow: View {
     var data: TeamDetailsModel
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(data.description)
-                .font(.headline)
-            
+                .font(.subheadline)
+
             Text(data.details)
-                .font(.title3.weight(.thin))
-            
-            Divider()
+                .font(.body.weight(.thin))
+
+            Spacer()
         }
-        .padding(8)
     }
 }
+
 struct TeamDetailsView: View {
     @StateObject private var viewModel = TeamDetailsViewModel()
 
     var teamId: String
     var teamName: String
+    var lastFiveGames: [LastGameModel]
+
     var body: some View {
         NavigationStack {
-            ZStack {
-                Color.element
-                    .ignoresSafeArea(.all)
-                
-                if viewModel.loading {
-                    ProgressView {
-                        Text("Loading...")
-                    }
-                    
-                } else {
-                    ScrollView {
-                        HStack(alignment: .center) {
-                            AsyncImage(url: URL(string: viewModel.logo)) { image in
-                                image
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                            } placeholder: {
-                                Image(systemName: "figure.soccer")
-                            }
-                            .frame(width: 72, height: 72)
-                            
-                            Text(viewModel.title)
-                                .font(.subheadline)
-                        }
-                        .padding()
-                        .background(Color.element)
-                        .clipShape(RoundedRectangle(cornerRadius: 20))
-                        .northWestShadow()
-                        
-                        VStack {
-                            ForEach(viewModel.details) { details in
-                                TeamDetailsRow(data: details)
-                            }
-                        }
-                        .background(Color.element)
-                        .clipShape(RoundedRectangle(cornerRadius: 20))
-                        .padding()
-                        .southEastShadow()
-                    }
-                    .frame(maxWidth: .infinity)
-                    .navigationTitle(teamName)
-                    .navigationBarTitleDisplayMode(.inline)
+            if viewModel.loading {
+                ProgressView {
+                    Text("Loading...")
                 }
+
+            } else {
+                List {
+                    TeamInfoHeader(logo: viewModel.logo, title: viewModel.title)
+
+                    ForEach(viewModel.details) { details in
+                        TeamDetailsRow(data: details)
+                            .padding(.top, 20)
+                            .padding(.bottom, -20)
+                    }
+                }
+                .listStyle(.plain)
+                .navigationTitle(teamName)
+                .navigationBarTitleDisplayMode(.inline)
             }
         }
         .task {
-            await viewModel.handleTeamDetails(teamId: teamId)
+            await viewModel.handleTeamDetails(teamId: teamId, lastFiveGames: lastFiveGames)
         }
     }
 }
 
 #Preview {
-    TeamDetailsView(teamId: "206d90db", teamName: "Barcelona")
+    TeamDetailsView(teamId: "206d90db", teamName: "Barcelona", lastFiveGames: [LastGameModel.sample])
 }

@@ -22,7 +22,7 @@ class TeamDetailsViewModel: ObservableObject, TeamDetailsService {
     @Published var logo: String = ""
     @Published var details: [TeamDetailsModel] = []
 
-    func handleTeamDetails(teamId: String) async {
+    func handleTeamDetails(teamId: String, lastFiveGames: [LastGameModel]) async {
         do {
             let response = try await getDetails(teamId: teamId)
             title = response.title

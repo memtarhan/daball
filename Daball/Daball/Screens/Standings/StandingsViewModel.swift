@@ -47,12 +47,20 @@ struct StatModel: Identifiable {
     }
 }
 
+struct LastGameModel: Identifiable {
+    var id: String
+    var status: String
+
+    static let sample = LastGameModel(id: "ac04a5d2", status: "L")
+}
+
 struct StandingModel: Identifiable {
     let rank: Int
     let id: String
     let name: String
     let logo: String
     let stats: [StatModel]
+    let lastFiveGames: [LastGameModel]
 
     static let sample = [
         StandingModel(
@@ -81,7 +89,8 @@ struct StandingModel: Identifiable {
                     shortDescription: "L",
                     value: 1
                 ),
-            ]
+            ],
+            lastFiveGames: [LastGameModel.sample]
         ),
         StandingModel(
             rank: 2,
@@ -109,7 +118,8 @@ struct StandingModel: Identifiable {
                     shortDescription: "L",
                     value: 2
                 ),
-            ]
+            ],
+            lastFiveGames: [LastGameModel.sample]
         ),
     ]
 }
@@ -124,7 +134,7 @@ class StandingsViewModel: ObservableObject, StandingsService {
 
     func reset(competitionId: Int) {
         loading = true
-        hasOtherPhases = false 
+        hasOtherPhases = false
         standings.removeAll()
         leagueTitle = ""
 
@@ -181,7 +191,8 @@ class StandingsViewModel: ObservableObject, StandingsService {
                         id: standing.teamId,
                         name: standing.name,
                         logo: standing.logo,
-                        stats: stats
+                        stats: stats,
+                        lastFiveGames: standing.lastFiveGames.map { LastGameModel(id: $0.id, status: $0.status.rawValue) }
                     )
                 } ?? []
 
