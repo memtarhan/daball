@@ -275,7 +275,7 @@ struct MatchResponse: HTTPResponse {
 struct MatchDateResponse: HTTPResponse {
     let date: String
     let time: String
-    let epoch: String
+    let epoch: Double
 }
 
 // MARK: - MatchDetailResponse
@@ -292,7 +292,7 @@ struct MatchTeamResponse: HTTPResponse {
     let id: String
     let logo: String
     let score: String
-    let scoreXg: String
+    let scoreXg: String?
     let dataPoints: [MatchDetailResponse]
     let currentStats: String
 }
