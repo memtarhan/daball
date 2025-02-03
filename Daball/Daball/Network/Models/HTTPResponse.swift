@@ -24,6 +24,57 @@ struct CompetitionResponse: HTTPResponse {
     let logo: String
 }
 
+struct LeagueTableResponse: HTTPResponse {
+    let phases: [LeaguePhaseResponse]
+}
+
+struct LeaguePhaseResponse: HTTPResponse {
+    let matches: [KnockoutPhaseMatchResponse]?
+    let title: String
+    let type: LeaguePhaseType
+    let description: String?
+    let standings: [StandingResponse]?
+    let statTypes: [StatTypeResponse]?
+}
+
+enum LeaguePhaseType: String, HTTPResponse {
+    case knockout
+    case league
+}
+
+// MARK: - KnockoutPhaseResponse
+
+struct KnockoutPhaseResponse: HTTPResponse {
+    let matches: [KnockoutPhaseMatchResponse]
+    let title: String
+    let description: String
+}
+
+// MARK: - KnockoutPhaseMatchResponse
+
+struct KnockoutPhaseMatchResponse: HTTPResponse {
+    let teams: [KnockoutTeamResponse]
+    let matches: [KnockoutMatchResponse]
+    let notes: String
+}
+
+// MARK: - KnockoutMatchResponse
+
+struct KnockoutMatchResponse: HTTPResponse {
+    let homeTeam: String
+    let awayTeam: String
+    let time: String
+    let date: String
+}
+
+// MARK: - KnockoutTeamResponse
+
+struct KnockoutTeamResponse: HTTPResponse {
+    let name: String
+    let id: String
+    let logo: String
+}
+
 // MARK: - StandingsResponse
 
 struct StandingsResponse: HTTPResponse {

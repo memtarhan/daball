@@ -13,6 +13,7 @@ struct StandingsView: View {
     @EnvironmentObject var competitionsViewModel: CompetitionsViewModel
 
     @State private var displayCompetitionsPopover: Bool = false
+    @State private var displayLeaguePhase: Bool = false
 
     var body: some View {
         NavigationStack {
@@ -22,18 +23,35 @@ struct StandingsView: View {
                 }
 
             } else {
-                SoccerStandings(data: viewModel.standings)
-                    .navigationTitle(competitionsViewModel.selectedCompetition?.displayName ?? "...")
-                    .navigationBarTitleDisplayMode(.inline)
-                    .toolbar {
-                        ToolbarItemGroup(placement: .primaryAction) {
+                VStack {
+                    if viewModel.hasOtherPhases {
+                        KnockoutPhaseView(data: viewModel.knockoutPhase)
+
+                    } else {
+                        SoccerStandings(data: viewModel.standings)
+                    }
+                }
+                .navigationTitle(competitionsViewModel.selectedCompetition?.displayName ?? "...")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItemGroup(placement: .primaryAction) {
+                        Button {
+                            displayCompetitionsPopover = true
+                        } label: {
+                            Image(systemName: displayCompetitionsPopover ? "chevron.up" : "chevron.down")
+                        }
+                    }
+
+                    if !viewModel.knockoutPhase.isEmpty {
+                        ToolbarItemGroup(placement: .topBarLeading) {
                             Button {
-                                displayCompetitionsPopover = true
+                                displayLeaguePhase = true
                             } label: {
-                                Image(systemName: displayCompetitionsPopover ? "chevron.up" : "chevron.down")
+                                Text("League")
                             }
                         }
                     }
+                }
             }
         }
         .task {
@@ -55,6 +73,10 @@ struct StandingsView: View {
                 .environmentObject(competitionsViewModel)
                 .interactiveDismissDisabled()
         }
+        .sheet(isPresented: $displayLeaguePhase) {
+            SoccerStandings(data: viewModel.standings)
+        }
+        
     }
 }
 

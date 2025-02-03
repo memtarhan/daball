@@ -9,16 +9,16 @@
 import Foundation
 
 protocol StandingsService: HTTPService, StandingsEndpointsService {
-    func getStandings(competitionId: Int) async throws -> StandingsResponse
+    func getStandings(competitionId: Int) async throws -> LeagueTableResponse
 }
 
 extension StandingsService {
-    func getStandings(competitionId: Int) async throws -> StandingsResponse {
+    func getStandings(competitionId: Int) async throws -> LeagueTableResponse {
         guard let endpoint = getStandingsURL(competitionId: competitionId) else {
             throw HTTPError.badURL
         }
 
-        let response: StandingsResponse = try await handleDataTask(from: endpoint)
+        let response: LeagueTableResponse = try await handleDataTask(from: endpoint)
         return response
     }
 }

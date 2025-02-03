@@ -8,6 +8,34 @@
 
 import Foundation
 
+struct KnockoutPhaseTeamModel: Identifiable {
+    let name: String
+    let id: String
+    let logo: String
+}
+
+struct KnockoutPhaseMatchModel: Identifiable {
+    let homeTeam: String
+    let awayTeam: String
+    let time: String
+    let date: String
+
+    var id: String { homeTeam + awayTeam }
+}
+
+struct KnockoutPhaseModel: Identifiable {
+    let teams: [KnockoutPhaseTeamModel]
+    let matches: [KnockoutPhaseMatchModel]
+    let notes: String
+    var id: String { teams.description }
+
+    static let sample = KnockoutPhaseModel(teams: [KnockoutPhaseTeamModel(name: "Bayern Munich", id: "054efa67", logo: "https://res.cloudinary.com/htok5sdtn/image/upload/v1/teams/logos/054efa67"),
+                                                   KnockoutPhaseTeamModel(name: "Celtic", id: "b81aa4fa", logo: "https://res.cloudinary.com/htok5sdtn/image/upload/v1/teams/logos/b81aa4fa")],
+                                           matches: [KnockoutPhaseMatchModel(homeTeam: "Celtic", awayTeam: "Bayern Munich", time: "20:00", date: "Feb 12"),
+                                                     KnockoutPhaseMatchModel(homeTeam: "Bayern Munich", awayTeam: "Celtic", time: "21:00", date: "Feb 18")],
+                                           notes: "Results are the aggregate results over two legs.")
+}
+
 struct StatModel: Identifiable {
     let description: String
     let shortDescription: String
@@ -91,40 +119,49 @@ class StandingsViewModel: ObservableObject, StandingsService {
     @Published var standings: [StandingModel] = []
     @Published var leagueTitle: String = ""
     @Published var loading: Bool = true
+    @Published var hasOtherPhases: Bool = false
+    @Published var knockoutPhase: [KnockoutPhaseModel] = []
 
-    func reset(
-        competitionId: Int
-    ) {
+    func reset(competitionId: Int) {
         loading = true
-        standings
-            .removeAll()
+        hasOtherPhases = false 
+        standings.removeAll()
         leagueTitle = ""
 
         Task {
-            await handleStandings(
-                competitionId: competitionId
-            )
+            await handleStandings(competitionId: competitionId)
         }
     }
 
-    func handleStandings(
-        competitionId: Int
-    ) async {
+    func handleStandings(competitionId: Int) async {
         loading = true
         do {
-            let response = try await getStandings(
-                competitionId: competitionId
-            )
-            leagueTitle = response.leagueTitle
+            let response = try await getStandings(competitionId: competitionId)
+            if let phase = response.phases.first(where: { $0.type == .knockout }) {
+                hasOtherPhases = true
+                knockoutPhase = phase.matches?.map { match in
+                    KnockoutPhaseModel(teams: match.teams.map { team in
+                        KnockoutPhaseTeamModel(name: team.name, id: team.id, logo: team.logo)
+                    }, matches: match.matches.map { singleMatch in
+                        KnockoutPhaseMatchModel(homeTeam: singleMatch.homeTeam, awayTeam: singleMatch.awayTeam, time: singleMatch.time, date: singleMatch.date)
+                    }, notes: match.notes)
+                } ?? []
+            }
+            guard let leagueStandings = response.phases.first(where: { $0.type == .league }) else {
+                // TODO: Display error view
+                return
+            }
 
-            standings = response.standings
+            leagueTitle = leagueStandings.title
+
+            standings = leagueStandings.standings?
                 .map { standing in
                     var stats = standing.stats.map { stat in
                         StatModel(
                             description: stat.description,
                             shortDescription: stat.shortDescription,
                             value: stat.value,
-                            tooltip: response.statTypes.first(where: { $0.shortDescription == stat.shortDescription })?.description
+                            tooltip: leagueStandings.statTypes?.first(where: { $0.shortDescription == stat.shortDescription })?.description
                         )
                     }
 
@@ -135,7 +172,7 @@ class StandingsViewModel: ObservableObject, StandingsService {
                                     description: stat.description,
                                     shortDescription: stat.shortDescription,
                                     value: stat.value,
-                                    tooltip: response.statTypes.first(where: { $0.shortDescription == stat.shortDescription })?.description
+                                    tooltip: leagueStandings.statTypes?.first(where: { $0.shortDescription == stat.shortDescription })?.description
                                 )
                             })
 
@@ -146,7 +183,7 @@ class StandingsViewModel: ObservableObject, StandingsService {
                         logo: standing.logo,
                         stats: stats
                     )
-                }
+                } ?? []
 
             loading = false
 
