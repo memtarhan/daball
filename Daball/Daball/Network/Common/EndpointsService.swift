@@ -72,3 +72,13 @@ extension TeamDetailsEndpointsService {
         URL(string: "\(baseURL)/teams/\(teamId)")
     }
 }
+
+protocol MatchEndpointsService: EndpointsService {
+    func getMatchURL(matchId: String) -> URL?
+}
+
+extension MatchEndpointsService {
+    func getMatchURL(matchId: String) -> URL? {
+        URL(string: "\(baseURL)/matches/\(matchId)")
+    }
+}

@@ -258,3 +258,41 @@ struct TeamDetailsResponse: HTTPResponse {
     let description: String
     let details: String
 }
+
+// MARK: - MatchResponse
+
+struct MatchResponse: HTTPResponse {
+    let title: String
+    let matchWeek: String
+    let teams: [MatchTeamResponse]
+    let date: MatchDateResponse
+    let events: [[String]]
+    let details: [MatchDetailResponse]
+}
+
+// MARK: - MatchDateResponse
+
+struct MatchDateResponse: HTTPResponse {
+    let date: String
+    let time: String
+    let epoch: String
+}
+
+// MARK: - MatchDetailResponse
+
+struct MatchDetailResponse: HTTPResponse {
+    let description: String
+    let value: String
+}
+
+// MARK: - MatchTeamResponse
+
+struct MatchTeamResponse: HTTPResponse {
+    let name: String
+    let id: String
+    let logo: String
+    let score: String
+    let scoreXg: String
+    let dataPoints: [MatchDetailResponse]
+    let currentStats: String
+}
