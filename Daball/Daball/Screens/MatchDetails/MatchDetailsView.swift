@@ -14,58 +14,66 @@ struct MatchDetailsView: View {
     var matchId: String
 
     var body: some View {
-        NavigationStack {
-            if viewModel.loading {
-                ProgressView {
-                    Text("Loading...")
-                }
+        GeometryReader { proxy in
 
-            } else {
-                VStack {
-                    if !viewModel.matchTeams.isEmpty {
-                        VStack(spacing: 20) {
-                            HStack(alignment: .center) {
-                                homeTeamView
-                                    .frame(minWidth: 0, maxWidth: .infinity)
-//                                    .background(Color.yellow)
+            NavigationStack {
+                ZStack {
+                    Color.element
+                        .ignoresSafeArea(.all)
 
-                                scoreView
-//                                    .background(Color.green)
+                    if viewModel.loading {
+                        ProgressView {
+                            Text("Loading...")
+                        }
 
-                                awayTeamView
-                                    .frame(minWidth: 0, maxWidth: .infinity)
-//                                    .background(Color.orange)
-                            }
-                            
-                            if let details = viewModel.details {
-                                VStack(spacing: 8) {
-                                    Text(details.date)
-                                        .font(.headline)
-                                        .underline()
-                                    
-                                    ForEach(details.details) { detail in
-                                        HStack(alignment: .firstTextBaseline) {
-                                            Text("\(detail.description):")
-                                                .font(.subheadline.weight(.medium))
-                                                .underline()
-                                            Text(detail.value)
+                    } else {
+                        ScrollView {
+                            if !viewModel.matchTeams.isEmpty {
+                                VStack(alignment: .center, spacing: 20) {
+                                    VStack {
+                                        HStack(alignment: .center) {
+                                            homeTeamView
+                                                .frame(minWidth: 0, maxWidth: .infinity)
+
+                                            scoreView
+
+                                            awayTeamView
+                                                .frame(minWidth: 0, maxWidth: .infinity)
                                         }
+                                        eventsView
+                                            .padding(.horizontal, 8)
+                                            .padding(.vertical, 12)
+                                    }
+                                    .padding(.vertical, 16)
+                                    .background(Color.systemBackground)
+                                    .clipShape(RoundedRectangle(cornerRadius: 20, style: .circular))
+                                    .padding(.horizontal, 8)
+                                    .northWestShadow(radius: 12)
+
+                                    MatchStatsView(data: viewModel.matchStats, proxy: proxy)
+                                        .padding(.vertical, 16)
+                                        .background(Color.systemBackground)
+                                        .clipShape(RoundedRectangle(cornerRadius: 20, style: .circular))
+                                        .padding(.horizontal, 8)
+                                        .northWestShadow(radius: 12)
+
+                                    if let details = viewModel.details {
+                                        getMatchDetailsView(details)
+                                            .padding(.horizontal, 8)
                                     }
                                 }
-                                .padding(.horizontal, 8)
-                                
                             }
-                        }
-                    }
 
-                    Spacer()
+                            Spacer()
+                        }
+                        .navigationTitle("Match Details")
+                        .navigationBarTitleDisplayMode(.inline)
+                    }
                 }
-                .navigationTitle("Match Details")
-                .navigationBarTitleDisplayMode(.inline)
+                .task {
+                    await viewModel.handleMatch(matchId: matchId)
+                }
             }
-        }
-        .task {
-            await viewModel.handleMatch(matchId: matchId)
         }
     }
 
@@ -155,8 +163,75 @@ struct MatchDetailsView: View {
             }
         }
     }
+
+    private var eventsView: some View {
+        HStack {
+            VStack(alignment: .center) {
+                ForEach(viewModel.homeTeamEvents) { event in
+                    HStack(alignment: .firstTextBaseline, spacing: 2) {
+                        Spacer()
+
+                        HStack(alignment: .center, spacing: 2) {
+                            Text(event.title)
+                                .font(.subheadline)
+                            Text(" · ")
+                                .font(.headline)
+                            Text(event.value)
+                                .font(.body.weight(.thin))
+                        }
+
+                        Image(systemName: event.iconName)
+                            .symbolRenderingMode(.palette)
+                            .foregroundStyle(event.type == .redCard ? .red : .green)
+                    }
+                }
+            }
+            .frame(minWidth: 0, maxWidth: .infinity)
+
+            Divider()
+
+            VStack(alignment: .center) {
+                ForEach(viewModel.awayTeamEvents) { event in
+                    HStack(alignment: .firstTextBaseline, spacing: 2) {
+                        Image(systemName: event.iconName)
+                            .symbolRenderingMode(.palette)
+                            .foregroundStyle(event.type == .redCard ? .red : .green)
+
+                        HStack(alignment: .center, spacing: 2) {
+                            Text(event.title)
+                                .font(.subheadline)
+                            Text(" · ")
+                                .font(.headline)
+                            Text(event.value)
+                                .font(.body.weight(.thin))
+                        }
+
+                        Spacer()
+                    }
+                }
+            }
+            .frame(minWidth: 0, maxWidth: .infinity)
+        }
+    }
+
+    private func getMatchDetailsView(_ details: MatchDetailsModel) -> some View {
+        VStack(spacing: 8) {
+            Text(details.date)
+                .font(.headline)
+                .underline()
+
+            ForEach(details.details) { detail in
+                HStack(alignment: .firstTextBaseline) {
+                    Text("\(detail.description):")
+                        .font(.subheadline.weight(.medium))
+                        .underline()
+                    Text(detail.value)
+                }
+            }
+        }
+    }
 }
 
 #Preview {
-    MatchDetailsView(matchId: "b839d4ce")
+    MatchDetailsView(matchId: "15e84040")
 }

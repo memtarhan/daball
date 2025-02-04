@@ -8,6 +8,60 @@
 
 import Foundation
 
+struct MatchStatTeamModel {
+    let percentage: String?
+    let success: Int?
+    let total: Int?
+    var items: [String]? = nil
+
+    var successWeight: Double {
+        if let success,
+           let total {
+            return CGFloat(success) / CGFloat(total)
+        }
+        return 1
+    }
+}
+
+struct MatchStatModel: Identifiable {
+    let title: String
+    let homeTeam: MatchStatTeamModel
+    let awayTeam: MatchStatTeamModel
+
+    var homeTeamWidthWeight: CGFloat {
+        if awayTeamWidthWeight == 1.0 { return 1.0 }
+        else { return 1.0 - awayTeamWidthWeight }
+    }
+
+    var awayTeamWidthWeight: CGFloat {
+        if let totalAway = awayTeam.total,
+           let totalHome = homeTeam.total {
+            return CGFloat(totalHome) / CGFloat(totalAway)
+        }
+        return 1.0
+    }
+
+    var id: String { title }
+
+    static let sample = MatchStatModel(title: "Passing Accuracy",
+                                       homeTeam: MatchStatTeamModel(percentage: "81%",
+                                                                    success: 324,
+                                                                    total: 402),
+                                       awayTeam: MatchStatTeamModel(percentage: "87%",
+                                                                    success: 578,
+                                                                    total: 663))
+
+    static let sample2 = MatchStatModel(title: "Cards",
+                                        homeTeam: MatchStatTeamModel(percentage: nil,
+                                                                     success: nil,
+                                                                     total: nil,
+                                                                     items: ["yellow_card", "yellow_card", "red_card"]),
+                                        awayTeam: MatchStatTeamModel(percentage: nil,
+                                                                     success: nil,
+                                                                     total: nil,
+                                                                     items: ["red_card"]))
+}
+
 struct MatchDataPointModel: Identifiable {
     let description: String
     let value: String
@@ -29,12 +83,24 @@ struct MatchDetailsModel {
     let details: [MatchDataPointModel]
 }
 
+struct MatchEventModel: Identifiable {
+    let title: String
+    let value: String
+    let iconName: String
+    let type: MatchEventType
+
+    var id: String { title + value }
+}
+
 @MainActor
 class MatchDetailsViewModel: ObservableObject, MatchService {
     @Published var loading: Bool = true
     @Published var title: String = ""
     @Published var matchTeams: [MatchTeamModel] = []
     @Published var details: MatchDetailsModel?
+    @Published var homeTeamEvents: [MatchEventModel] = []
+    @Published var awayTeamEvents: [MatchEventModel] = []
+    @Published var matchStats: [MatchStatModel] = []
 
     func handleMatch(matchId: String) async {
         do {
@@ -53,6 +119,31 @@ class MatchDetailsViewModel: ObservableObject, MatchService {
             details = MatchDetailsModel(date: Date(timeIntervalSince1970: response.date.epoch).asDisplayDate,
                                         details: response.details.map { MatchDataPointModel(description: $0.description, value: $0.value) })
 
+            homeTeamEvents = response.events.homeTeam.map { event in
+                MatchEventModel(title: event.title,
+                                value: event.value,
+                                iconName: event.type == .goal ? "soccerball" : "rectangle.portrait.fill",
+                                type: event.type)
+            }
+
+            awayTeamEvents = response.events.awayTeam.map { event in
+                MatchEventModel(title: event.title,
+                                value: event.value,
+                                iconName: event.type == .goal ? "soccerball" : "rectangle.portrait.fill",
+                                type: event.type)
+            }
+
+            matchStats = response.stats.map { stats in
+                MatchStatModel(title: stats.type.capitalized,
+                               homeTeam: MatchStatTeamModel(percentage: stats.homeTeam.percentage,
+                                                            success: stats.homeTeam.success,
+                                                            total: stats.homeTeam.total,
+                                                            items: stats.homeTeam.items),
+                               awayTeam: MatchStatTeamModel(percentage: stats.awayTeam.percentage,
+                                                            success: stats.awayTeam.success,
+                                                            total: stats.awayTeam.total,
+                                                            items: stats.awayTeam.items))
+            }
             loading = false
         } catch {
             print(error.localizedDescription)

@@ -266,8 +266,29 @@ struct MatchResponse: HTTPResponse {
     let matchWeek: String
     let teams: [MatchTeamResponse]
     let date: MatchDateResponse
-    let events: [[String]]
+    let events: MatchEventsResponse
     let details: [MatchDetailResponse]
+    let stats: [MatchStatsResponse]
+}
+
+struct MatchEventsResponse: HTTPResponse {
+    let homeTeam: [MatchEventResponse]
+    let awayTeam: [MatchEventResponse]
+}
+
+// MARK: - MatchEventResponse
+
+struct MatchEventResponse: HTTPResponse {
+    let title: String
+    let value: String
+    let type: MatchEventType
+}
+
+// MARK: - MatchEventType
+
+enum MatchEventType: String, HTTPResponse {
+    case redCard = "red_card"
+    case goal
 }
 
 // MARK: - MatchDateResponse
@@ -295,4 +316,21 @@ struct MatchTeamResponse: HTTPResponse {
     let scoreXg: String?
     let dataPoints: [MatchDetailResponse]
     let currentStats: String
+}
+
+// MARK: - MatchStatsResponse
+
+struct MatchStatsResponse: HTTPResponse {
+    let type: String
+    let homeTeam: MatchStatResponse
+    let awayTeam: MatchStatResponse
+}
+
+// MARK: - MatchStatResponse
+
+struct MatchStatResponse: HTTPResponse {
+    let percentage: String?
+    let success: Int?
+    let total: Int?
+    let items: [String]?
 }
