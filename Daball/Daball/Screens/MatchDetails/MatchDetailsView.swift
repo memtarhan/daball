@@ -50,12 +50,23 @@ struct MatchDetailsView: View {
                                     .padding(.horizontal, 8)
                                     .northWestShadow(radius: 12)
 
-                                    MatchStatsView(data: viewModel.matchStats, proxy: proxy)
+                                    MatchStatsView(data: viewModel.matchStats,
+                                                   homeTeamName: viewModel.matchTeams[0].name,
+                                                   homeTeamLogo: viewModel.matchTeams[0].logo,
+                                                   awayTeamName: viewModel.matchTeams[1].name,
+                                                   awayTeamLogo: viewModel.matchTeams[1].logo,
+                                                   width: proxy.size.width)
                                         .padding(.vertical, 16)
                                         .background(Color.systemBackground)
                                         .clipShape(RoundedRectangle(cornerRadius: 20, style: .circular))
                                         .padding(.horizontal, 8)
                                         .northWestShadow(radius: 12)
+
+                                    MatchExtendedStatsView(data: viewModel.extendedStats,
+                                                           homeTeamName: viewModel.matchTeams[0].name,
+                                                           awayTeamName: viewModel.matchTeams[1].name)
+                                        .padding(.vertical, 16)
+                                        .padding(.horizontal, 20)
 
                                     if let details = viewModel.details {
                                         getMatchDetailsView(details)

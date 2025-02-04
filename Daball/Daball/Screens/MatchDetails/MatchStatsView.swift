@@ -10,7 +10,7 @@ import SwiftUI
 
 struct MatchStatRow: View {
     var data: MatchStatModel
-    var proxy: GeometryProxy
+    var width: CGFloat
 
     var body: some View {
         VStack(alignment: .center, spacing: 12) {
@@ -57,10 +57,10 @@ struct MatchStatRow: View {
                     ZStack(alignment: .trailing) {
                         Capsule()
                             .fill(Color.gray.opacity(0.3))
-                            .frame(width: getUsableWidth(proxy: proxy) * data.homeTeamWidthWeight, height: 20)
+                            .frame(width: usableWidth * data.homeTeamWidthWeight, height: 20)
                         Capsule()
                             .fill(Color.green)
-                            .frame(width: getUsableWidth(proxy: proxy) * data.homeTeamWidthWeight * data.homeTeam.successWeight, height: 20)
+                            .frame(width: usableWidth * data.homeTeamWidthWeight * data.homeTeam.successWeight, height: 20)
                     }
                 }
             }
@@ -96,10 +96,10 @@ struct MatchStatRow: View {
                     ZStack(alignment: .leading) {
                         Capsule()
                             .fill(Color.gray.opacity(0.3))
-                            .frame(width: getUsableWidth(proxy: proxy) * data.awayTeamWidthWeight, height: 20)
+                            .frame(width: usableWidth * data.awayTeamWidthWeight, height: 20)
                         Capsule()
                             .fill(Color.green)
-                            .frame(width: getUsableWidth(proxy: proxy) * data.awayTeamWidthWeight * data.awayTeam.successWeight, height: 20)
+                            .frame(width: usableWidth * data.awayTeamWidthWeight * data.awayTeam.successWeight, height: 20)
                     }
                     Spacer()
                 }
@@ -107,25 +107,53 @@ struct MatchStatRow: View {
         }
     }
 
-    func getUsableWidth(proxy: GeometryProxy) -> CGFloat {
-        proxy.size.width * 0.4
+    var usableWidth: CGFloat {
+        width * 0.4
     }
 }
 
 struct MatchStatsView: View {
     var data: [MatchStatModel]
-    var proxy: GeometryProxy
+    var homeTeamName: String
+    var homeTeamLogo: String
+    var awayTeamName: String
+    var awayTeamLogo: String
+    var width: CGFloat
 
     var body: some View {
         VStack {
+            HStack(alignment: .center, spacing: 20) {
+                HStack(alignment: .center) {
+                    Spacer()
+                    Text(homeTeamName)
+                        .font(.title3.weight(.semibold))
+                    TeamLogoView(url: homeTeamLogo)
+                        .frame(width: 36, height: 36)
+                }
+                .frame(minWidth: 0, maxWidth: .infinity)
+
+                HStack(alignment: .center) {
+                    TeamLogoView(url: awayTeamLogo)
+                        .frame(width: 36, height: 36)
+                    Text(awayTeamName)
+                        .font(.title3.weight(.semibold))
+                    Spacer()
+                }
+                .frame(minWidth: 0, maxWidth: .infinity)
+            }
+            .padding(.vertical, 12)
             ForEach(data) { stats in
-                MatchStatRow(data: stats, proxy: proxy)
-//                    .padding()
+                MatchStatRow(data: stats, width: width)
             }
         }
     }
 }
 
-//#Preview {
-//    MatchStatsView(data: [MatchStatModel.sample, MatchStatModel.sample2])
-//}
+#Preview {
+    MatchStatsView(data: [MatchStatModel.sample, MatchStatModel.sample2],
+                   homeTeamName: "Team A",
+                   homeTeamLogo: "",
+                   awayTeamName: "Team B",
+                   awayTeamLogo: "",
+                   width: 320)
+}

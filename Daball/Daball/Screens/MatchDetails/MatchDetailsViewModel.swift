@@ -110,6 +110,25 @@ struct MatchEventModel: Identifiable {
     var id: String { title + value }
 }
 
+struct MatchExtendedStatsGroupModel: Identifiable {
+    let id: UUID = UUID()
+    let stats: [MatchExtendedStatsModel]
+}
+
+struct MatchExtendedStatsModel: Identifiable {
+    let description: String
+    let homeTeamValue: Int
+    let awayTeamValue: Int
+
+    var id: String { description }
+
+    static let sample = MatchExtendedStatsModel(
+        description: "Corners",
+        homeTeamValue: 10,
+        awayTeamValue: 8
+    )
+}
+
 @MainActor
 class MatchDetailsViewModel: ObservableObject, MatchService {
     @Published var loading: Bool = true
@@ -119,6 +138,7 @@ class MatchDetailsViewModel: ObservableObject, MatchService {
     @Published var homeTeamEvents: [MatchEventModel] = []
     @Published var awayTeamEvents: [MatchEventModel] = []
     @Published var matchStats: [MatchStatModel] = []
+    @Published var extendedStats: [MatchExtendedStatsGroupModel] = []
 
     func handleMatch(matchId: String) async {
         do {
@@ -162,6 +182,17 @@ class MatchDetailsViewModel: ObservableObject, MatchService {
                                                             total: stats.awayTeam.total,
                                                             items: stats.awayTeam.items))
             }
+
+            let extendedStatsModels = response.extendedStats.map { stats in
+                MatchExtendedStatsModel(description: stats.description,
+                                        homeTeamValue: stats.homeTeamValue,
+                                        awayTeamValue: stats.awayTeamValue)
+            }.chunked(into: 10)
+
+            extendedStats = extendedStatsModels.map { group in
+                MatchExtendedStatsGroupModel(stats: group)
+            }
+
             loading = false
         } catch {
             print(error.localizedDescription)

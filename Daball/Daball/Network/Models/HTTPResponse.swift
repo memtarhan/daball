@@ -269,6 +269,7 @@ struct MatchResponse: HTTPResponse {
     let events: MatchEventsResponse
     let details: [MatchDetailResponse]
     let stats: [MatchStatsResponse]
+    let extendedStats: [MatchExtendedStatsResponse]
 }
 
 struct MatchEventsResponse: HTTPResponse {
@@ -333,4 +334,12 @@ struct MatchStatResponse: HTTPResponse {
     let success: Int?
     let total: Int?
     let items: [String]?
+}
+
+// MARK: - MatchExtendedStatsResponse
+
+struct MatchExtendedStatsResponse: HTTPResponse {
+    let description: String
+    let homeTeamValue: Int
+    let awayTeamValue: Int
 }
