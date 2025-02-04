@@ -29,16 +29,34 @@ struct MatchStatModel: Identifiable {
     let awayTeam: MatchStatTeamModel
 
     var homeTeamWidthWeight: CGFloat {
-        if awayTeamWidthWeight == 1.0 { return 1.0 }
-        else { return 1.0 - awayTeamWidthWeight }
+        if awayTeamWidthWeight == 1.0 {
+            return 1.0
+        } else {
+            let width = 1.0 - awayTeamWidthWeight
+            return width
+        }
     }
 
     var awayTeamWidthWeight: CGFloat {
         if let totalAway = awayTeam.total,
            let totalHome = homeTeam.total {
-            return CGFloat(totalHome) / CGFloat(totalAway)
+            var weight: CGFloat = 1
+            if totalAway > totalHome {
+                let w = CGFloat(totalHome) / CGFloat(totalAway)
+                weight = 1.0 - w
+
+            } else if totalAway < totalHome {
+                weight = CGFloat(totalAway) / CGFloat(totalHome)
+
+            } else {
+                weight = 1.0
+            }
+
+            return weight
+
+        } else {
+            return 1.0
         }
-        return 1.0
     }
 
     var id: String { title }
