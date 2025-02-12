@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import BallKit
 
 struct StandingsView: View {
     @StateObject private var viewModel = StandingsViewModel()
@@ -28,7 +29,7 @@ struct StandingsView: View {
                         KnockoutPhaseView(data: viewModel.knockoutPhase)
 
                     } else {
-                        SoccerStandings(data: viewModel.standings)
+                        BallKit.StandingsView(data: viewModel.newStandings)
                     }
                 }
                 .navigationTitle(competitionsViewModel.selectedCompetition?.displayName ?? "...")
@@ -74,7 +75,7 @@ struct StandingsView: View {
                 .interactiveDismissDisabled()
         }
         .sheet(isPresented: $displayLeaguePhase) {
-            SoccerStandings(data: viewModel.standings)
+            BallKit.StandingsView(data: viewModel.newStandings)
         }
         
     }

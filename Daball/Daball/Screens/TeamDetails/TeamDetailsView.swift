@@ -6,6 +6,7 @@
 //  Copyright © 2025 MEMTARHAN. All rights reserved.
 //
 
+import BallKit
 import SwiftUI
 
 struct TeamInfoHeader: View {
@@ -44,7 +45,7 @@ struct TeamDetailsView: View {
 
     var teamId: String
     var teamName: String
-    var lastFiveGames: [LastGameModel]
+    var lastFiveGames: [LastGameData]
 
     var body: some View {
         NavigationStack {
@@ -75,5 +76,5 @@ struct TeamDetailsView: View {
 }
 
 #Preview {
-    TeamDetailsView(teamId: "206d90db", teamName: "Barcelona", lastFiveGames: [LastGameModel.sample])
+    TeamDetailsView(teamId: "206d90db", teamName: "Barcelona", lastFiveGames: [])
 }

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import BallKit
 
 struct TeamDetailsModel: Identifiable {
     let description: String
@@ -22,7 +23,7 @@ class TeamDetailsViewModel: ObservableObject, TeamDetailsService {
     @Published var logo: String = ""
     @Published var details: [TeamDetailsModel] = []
 
-    func handleTeamDetails(teamId: String, lastFiveGames: [LastGameModel]) async {
+    func handleTeamDetails(teamId: String, lastFiveGames: [LastGameData]) async {
         do {
             let response = try await getDetails(teamId: teamId)
             title = response.title

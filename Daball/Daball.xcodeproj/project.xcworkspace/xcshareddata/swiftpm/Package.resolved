@@ -1,0 +1,15 @@
+{
+  "originHash" : "e97063d1013b8a096c55086e5038ae62d9aeb606306c934899436fb165b40f39",
+  "pins" : [
+    {
+      "identity" : "ballkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/memtarhan/BallKit",
+      "state" : {
+        "revision" : "637dc05d987814fc7b0569f0cc6a0a797118ceb2",
+        "version" : "1.0.0"
+      }
+    }
+  ],
+  "version" : 3
+}

@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		DBB395D92D5D493B00B05CAD /* BallKit in Frameworks */ = {isa = PBXBuildFile; productRef = DBB395D82D5D493B00B05CAD /* BallKit */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		DBB61D822D2F19040059EAA9 /* Daball.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Daball.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -23,6 +27,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DBB395D92D5D493B00B05CAD /* BallKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +70,7 @@
 			);
 			name = Daball;
 			packageProductDependencies = (
+				DBB395D82D5D493B00B05CAD /* BallKit */,
 			);
 			productName = Daball;
 			productReference = DBB61D822D2F19040059EAA9 /* Daball.app */;
@@ -95,6 +101,9 @@
 			);
 			mainGroup = DBB61D792D2F19040059EAA9;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				DBB395D72D5D493B00B05CAD /* XCRemoteSwiftPackageReference "BallKit" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = DBB61D832D2F19040059EAA9 /* Products */;
 			projectDirPath = "";
@@ -327,6 +336,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		DBB395D72D5D493B00B05CAD /* XCRemoteSwiftPackageReference "BallKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/memtarhan/BallKit";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		DBB395D82D5D493B00B05CAD /* BallKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DBB395D72D5D493B00B05CAD /* XCRemoteSwiftPackageReference "BallKit" */;
+			productName = BallKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = DBB61D7A2D2F19040059EAA9 /* Project object */;
 }
