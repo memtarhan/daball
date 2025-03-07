@@ -29,7 +29,7 @@ struct StandingsView: View {
                         KnockoutPhaseView(data: viewModel.knockoutPhase)
 
                     } else {
-                        BallKit.StandingsView(data: viewModel.newStandings)
+                        BallKit.StandingsView(data: viewModel.standings)
                     }
                 }
                 .navigationTitle(competitionsViewModel.selectedCompetition?.displayName ?? "...")
@@ -75,7 +75,7 @@ struct StandingsView: View {
                 .interactiveDismissDisabled()
         }
         .sheet(isPresented: $displayLeaguePhase) {
-            BallKit.StandingsView(data: viewModel.newStandings)
+            BallKit.StandingsView(data: viewModel.standings)
         }
         
     }

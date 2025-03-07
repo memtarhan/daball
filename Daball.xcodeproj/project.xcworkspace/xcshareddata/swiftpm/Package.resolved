@@ -6,8 +6,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/memtarhan/BallKit",
       "state" : {
-        "revision" : "637dc05d987814fc7b0569f0cc6a0a797118ceb2",
-        "version" : "1.0.0"
+        "revision" : "7470eb64c1b9093bffe7e91ed7db3e8f9becd364",
+        "version" : "1.0.3"
       }
     }
   ],

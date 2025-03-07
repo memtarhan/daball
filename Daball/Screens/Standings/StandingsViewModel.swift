@@ -44,12 +44,12 @@ class StandingsViewModel: ObservableObject, StandingsService {
     @Published var hasOtherPhases: Bool = false
     @Published var knockoutPhase: [KnockoutPhaseModel] = []
 
-    @Published var newStandings: [StandingsData] = []
+    @Published var standings: [StandingsData] = []
 
     func reset(competitionId: Int) {
         loading = true
         hasOtherPhases = false
-        newStandings.removeAll()
+        standings.removeAll()
         leagueTitle = ""
 
         Task {
@@ -78,7 +78,7 @@ class StandingsViewModel: ObservableObject, StandingsService {
 
             leagueTitle = leagueStandings.title
 
-            newStandings = leagueStandings.standings?
+            standings = leagueStandings.standings?
                 .map { standing in
                     var stats = standing.stats.map { stat in
                         StatsData(

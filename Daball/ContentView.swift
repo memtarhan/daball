@@ -61,10 +61,8 @@ struct DaballTabView: View {
                     } label: {
                         Image(systemName: item.iconName)
                             .foregroundColor(.white)
-
                     }
                     .buttonStyle(ColorfulButtonStyle(isPressed: selectedTab == item.rawValue))
-                    
                 }
                 .frame(minWidth: 0, maxWidth: .infinity)
             }
