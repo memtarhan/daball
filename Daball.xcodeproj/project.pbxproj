@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DB1C33682D9424EF0021B685 /* Networkable in Frameworks */ = {isa = PBXBuildFile; productRef = DB1C33672D9424EF0021B685 /* Networkable */; };
 		DBB395D92D5D493B00B05CAD /* BallKit in Frameworks */ = {isa = PBXBuildFile; productRef = DBB395D82D5D493B00B05CAD /* BallKit */; };
 /* End PBXBuildFile section */
 
@@ -28,6 +29,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DBB395D92D5D493B00B05CAD /* BallKit in Frameworks */,
+				DB1C33682D9424EF0021B685 /* Networkable in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -71,6 +73,7 @@
 			name = Daball;
 			packageProductDependencies = (
 				DBB395D82D5D493B00B05CAD /* BallKit */,
+				DB1C33672D9424EF0021B685 /* Networkable */,
 			);
 			productName = Daball;
 			productReference = DBB61D822D2F19040059EAA9 /* Daball.app */;
@@ -103,6 +106,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				DBB395D72D5D493B00B05CAD /* XCRemoteSwiftPackageReference "BallKit" */,
+				DB1C33662D9424EF0021B685 /* XCRemoteSwiftPackageReference "Networkable" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = DBB61D832D2F19040059EAA9 /* Products */;
@@ -338,6 +342,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		DB1C33662D9424EF0021B685 /* XCRemoteSwiftPackageReference "Networkable" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/memtarhan/Networkable";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
 		DBB395D72D5D493B00B05CAD /* XCRemoteSwiftPackageReference "BallKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/memtarhan/BallKit";
@@ -349,6 +361,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		DB1C33672D9424EF0021B685 /* Networkable */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DB1C33662D9424EF0021B685 /* XCRemoteSwiftPackageReference "Networkable" */;
+			productName = Networkable;
+		};
 		DBB395D82D5D493B00B05CAD /* BallKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = DBB395D72D5D493B00B05CAD /* XCRemoteSwiftPackageReference "BallKit" */;

@@ -343,3 +343,21 @@ struct MatchExtendedStatsResponse: HTTPResponse {
     let homeTeamValue: Int
     let awayTeamValue: Int
 }
+
+struct FootballStatsResponse: Decodable {
+    let stats: [FootballStatResponse]
+}
+
+struct FootballStatResponse: Decodable {
+    let title: String
+    let id: String
+    let items: [FootballIndividualStatResponse]
+}
+
+struct FootballIndividualStatResponse: Decodable {
+    let player: String
+    let team: String
+    let teamLogo: String?
+    let rank: Int?
+    let value: Double
+}
