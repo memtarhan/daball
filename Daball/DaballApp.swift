@@ -28,8 +28,8 @@ struct DaballApp: App {
 
     var body: some Scene {
         WindowGroup {
-            FootballStatsView()
-                .environment(footballStatsModel)
+            DaballTabView()
+                .environmentObject(competitionsViewModel)
         }
     }
 }

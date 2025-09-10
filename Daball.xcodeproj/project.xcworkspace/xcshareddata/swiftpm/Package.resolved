@@ -1,5 +1,5 @@
 {
-  "originHash" : "e97063d1013b8a096c55086e5038ae62d9aeb606306c934899436fb165b40f39",
+  "originHash" : "6242338c90b8f571c9b649ccb210b26974fa5fed10b5d23556f79d300b2f2144",
   "pins" : [
     {
       "identity" : "ballkit",
@@ -8,6 +8,15 @@
       "state" : {
         "revision" : "7470eb64c1b9093bffe7e91ed7db3e8f9becd364",
         "version" : "1.0.3"
+      }
+    },
+    {
+      "identity" : "networkable",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/memtarhan/Networkable",
+      "state" : {
+        "revision" : "4271413e63c5cb3df96f207c4fbbceded3d40cb9",
+        "version" : "1.0.4"
       }
     }
   ],
